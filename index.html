@@ -49,15 +49,17 @@
 
     /* ===== Body & App Container ===== */
     body {
-      background-color: var(--bg);
-      font-family: "Noto Sans TC", "Rounded Mplus 1c", -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 30%, #FFF8F0 70%, #F0F4FF 100%);
+      background-attachment: fixed;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto,
+        "Noto Sans TC", "Helvetica Neue", Arial, sans-serif;
       color: var(--text);
       font-size: var(--font-size-md);
       line-height: 1.6;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
     #app {
@@ -95,6 +97,7 @@
       justify-content: center;
       gap: 8px;
       padding: 12px 24px;
+      min-height: 44px;
       font-size: var(--font-size-md);
       font-weight: 700;
       font-family: inherit;
@@ -340,16 +343,29 @@
       font-size: 2.8rem;
       color: var(--primary);
       text-shadow: 2px 2px 0 rgba(74,144,217,0.15);
+      animation: titleSlideIn 0.7s ease-out;
     }
     .home-title .subtitle {
       font-size: var(--font-size-lg);
       color: var(--accent);
       font-weight: 700;
       margin-top: 8px;
+      animation: titleSlideIn 0.7s ease-out 0.15s both;
+    }
+    @keyframes titleSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
     .home-input {
       width: 100%;
       max-width: 320px;
+      animation: titleSlideIn 0.7s ease-out 0.2s both;
     }
     .home-input label {
       display: block;
@@ -363,6 +379,7 @@
       gap: 16px;
       width: 100%;
       max-width: 320px;
+      animation: titleSlideIn 0.7s ease-out 0.3s both;
     }
 
     /* ===== Word Selection Page ===== */
@@ -412,9 +429,15 @@
       font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
     .letter-btn:hover {
       background: var(--primary);
+      color: white;
+    }
+    .letter-btn:active {
+      transform: scale(0.92);
+      background: var(--primary-dark);
       color: white;
     }
     .select-actions {
@@ -425,6 +448,7 @@
     .select-list {
       max-height: 55vh;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       border: 2px solid #E0E6ED;
       border-radius: var(--radius-sm);
       padding: 8px;
@@ -449,7 +473,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 6px 8px;
+      padding: 8px;
+      min-height: 44px;
       cursor: pointer;
       border-radius: 6px;
       transition: background 0.15s;
@@ -477,7 +502,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-top: 2px solid #E0E6ED;
       padding: 12px 20px;
       display: flex;
@@ -514,6 +541,9 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       border-color: var(--primary-light);
+    }
+    .type-card:active:not(.completed) {
+      transform: translateY(-1px) scale(0.98);
     }
     .type-card.completed {
       opacity: 0.5;
@@ -603,12 +633,15 @@
       font-size: var(--font-size-lg) !important;
       text-align: center;
       max-width: 400px;
+      min-height: 48px;
     }
     .btn-choice {
       width: 100%;
       max-width: 400px;
       padding: 14px 20px;
+      min-height: 48px;
       font-size: var(--font-size-md);
+      font-family: inherit;
       background: var(--card-bg);
       border: 3px solid #E0E6ED;
       border-radius: var(--radius-sm);
@@ -616,10 +649,15 @@
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-choice:hover {
+    .btn-choice:hover:not(:disabled) {
       border-color: var(--primary);
       background: rgba(74,144,217,0.05);
+      transform: translateY(-1px);
+    }
+    .btn-choice:active:not(:disabled) {
+      transform: scale(0.98);
     }
     .btn-choice:disabled {
       cursor: default;
@@ -712,8 +750,9 @@
     }
     .btn-option:hover {
       border-color: var(--primary-light);
-      transform: none;
-      box-shadow: none;
+    }
+    .btn-option:active {
+      transform: scale(0.96);
     }
     .btn-option.active {
       border-color: var(--primary);
@@ -794,8 +833,8 @@
     /* ===== Responsive ===== */
     @media (max-width: 480px) {
       :root {
-        --font-size-xl: 1.6rem;
-        --font-size-lg: 1.25rem;
+        --font-size-xl: 1.5rem;
+        --font-size-lg: 1.2rem;
         --font-size-md: 1rem;
       }
 
@@ -806,6 +845,96 @@
       .btn-lg {
         padding: 14px 28px;
         font-size: var(--font-size-lg);
+      }
+
+      .home-title h1 {
+        font-size: 2rem;
+        word-break: keep-all;
+      }
+
+      .question-word {
+        font-size: 1.6rem;
+        min-width: auto;
+        max-width: 100%;
+        word-break: break-word;
+        padding: 16px;
+      }
+
+      .game-input {
+        font-size: var(--font-size-md) !important;
+        max-width: 100%;
+      }
+
+      .select-footer {
+        padding: 10px 16px;
+        gap: 8px;
+      }
+
+      .select-container {
+        padding-bottom: 90px;
+      }
+
+      .word-en {
+        min-width: 90px;
+        font-size: 0.95rem;
+      }
+
+      .word-zh {
+        font-size: 0.85rem;
+      }
+
+      .select-letters {
+        gap: 4px;
+      }
+
+      .letter-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+      }
+
+      .type-card {
+        padding: 18px;
+      }
+
+      .score-display {
+        font-size: 2.4rem;
+      }
+
+      #leaderboard-table th,
+      #leaderboard-table td {
+        padding: 8px 6px;
+        font-size: 0.85rem;
+      }
+
+      .btn-option {
+        min-width: 70px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Extra small screens (iPhone SE 375px) */
+    @media (max-width: 375px) {
+      #app {
+        padding: 8px;
+      }
+
+      .home-title h1 {
+        font-size: 1.8rem;
+      }
+
+      .question-word {
+        font-size: 1.4rem;
+      }
+
+      .btn-choice {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+      }
+
+      .select-actions {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -1470,7 +1599,10 @@
 
     function scrollToLetter(letter) {
       const el = document.getElementById('group-' + letter);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const container = document.getElementById('word-list');
+      if (el && container) {
+        container.scrollTop = el.offsetTop - container.offsetTop;
+      }
     }
 
     function saveSelection() {
