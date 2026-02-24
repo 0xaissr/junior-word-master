@@ -549,6 +549,248 @@
       font-weight: 700;
     }
 
+    /* ===== Game Page ===== */
+    .game-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px 0;
+    }
+    .game-header {
+      margin-bottom: 24px;
+    }
+    .game-progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 12px 0 8px;
+    }
+    #game-progress-text {
+      font-weight: 700;
+      color: var(--text);
+    }
+    #game-remaining {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .game-question {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .question-prompt {
+      font-size: var(--font-size-md);
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    .question-word {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: inline-block;
+      min-width: 200px;
+    }
+    .game-answer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .game-input {
+      font-size: var(--font-size-lg) !important;
+      text-align: center;
+      max-width: 400px;
+    }
+    .btn-choice {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px 20px;
+      font-size: var(--font-size-md);
+      background: var(--card-bg);
+      border: 3px solid #E0E6ED;
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    .btn-choice:hover {
+      border-color: var(--primary);
+      background: rgba(74,144,217,0.05);
+    }
+    .btn-choice:disabled {
+      cursor: default;
+    }
+    .btn-choice.correct {
+      border-color: var(--success);
+      background: rgba(46,204,113,0.1);
+      color: var(--success);
+    }
+    .btn-choice.wrong {
+      border-color: var(--danger);
+      background: rgba(231,76,60,0.1);
+      color: var(--danger);
+    }
+    .feedback {
+      text-align: center;
+      margin: 16px 0;
+      min-height: 60px;
+    }
+    .feedback-correct {
+      font-size: var(--font-size-lg);
+      color: var(--success);
+      font-weight: 700;
+      animation: bounceIn 0.5s;
+    }
+    .feedback-wrong {
+      font-size: var(--font-size-md);
+      color: var(--danger);
+      font-weight: 600;
+      animation: shakeX 0.5s;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shakeX {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    .game-actions {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .complete-message {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .complete-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .complete-message h2 {
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    /* ===== Challenge Setup ===== */
+    .setup-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 16px 0;
+    }
+    .setup-section {
+      margin: 24px 0;
+    }
+    .setup-section h3 {
+      font-size: var(--font-size-md);
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .setup-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-option {
+      flex: 1;
+      min-width: 80px;
+      padding: 12px 16px;
+      border: 3px solid #E0E6ED;
+      border-radius: var(--radius-sm);
+      background: white;
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-option:hover {
+      border-color: var(--primary-light);
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-option.active {
+      border-color: var(--primary);
+      background: rgba(74,144,217,0.1);
+      color: var(--primary);
+    }
+
+    /* ===== Result Page ===== */
+    .result-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 24px 0;
+      text-align: center;
+    }
+    .result-score {
+      margin-bottom: 32px;
+    }
+    .result-score h2 {
+      font-size: var(--font-size-xl);
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .score-display {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .score-rate {
+      font-size: var(--font-size-lg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .result-leaderboard {
+      margin: 24px 0;
+      text-align: left;
+    }
+    .result-leaderboard h3 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    #leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    #leaderboard-table caption {
+      padding: 12px;
+      font-weight: 700;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    #leaderboard-table th {
+      background: var(--primary);
+      color: white;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+    #leaderboard-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #E0E6ED;
+      font-size: 0.95rem;
+    }
+    #leaderboard-table tr.highlight {
+      background: rgba(74,144,217,0.1);
+      font-weight: 700;
+    }
+    .result-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
     /* ===== Responsive ===== */
     @media (max-width: 480px) {
       :root {
@@ -616,10 +858,65 @@
         <div class="type-cards" id="type-cards"></div>
       </div>
     </section>
-    <section id="page-practice-game" class="page">練習-遊戲</section>
-    <section id="page-challenge-setup" class="page">挑戰-設定</section>
-    <section id="page-challenge-game" class="page">挑戰-遊戲</section>
-    <section id="page-challenge-result" class="page">挑戰-結算</section>
+    <section id="page-practice-game" class="page">
+      <div class="game-container">
+        <div class="game-header">
+          <button class="btn btn-sm btn-back" onclick="exitGame()">← 離開</button>
+          <div class="game-progress-info">
+            <span id="game-progress-text">第 1 題</span>
+            <span id="game-remaining"></span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="game-progress-bar"></div></div>
+        </div>
+        <div class="game-question" id="game-question"></div>
+        <div class="game-answer" id="game-answer"></div>
+        <div class="feedback" id="game-feedback"></div>
+        <div class="game-actions" id="game-actions"></div>
+      </div>
+    </section>
+    <section id="page-challenge-setup" class="page">
+      <div class="setup-container">
+        <div class="select-header">
+          <button class="btn btn-sm btn-back" onclick="showPage('page-home')">← 返回</button>
+          <h2>🏆 挑戰模式</h2>
+        </div>
+        <div class="setup-section">
+          <h3>選擇題型</h3>
+          <div class="setup-options" id="challenge-type-options">
+            <button class="btn btn-option active" data-type="zh2en" onclick="selectChallengeType('zh2en')">✏️ 中翻英</button>
+            <button class="btn btn-option" data-type="en2zh" onclick="selectChallengeType('en2zh')">📝 英翻中</button>
+            <button class="btn btn-option" data-type="choice" onclick="selectChallengeType('choice')">🔤 選擇題</button>
+          </div>
+        </div>
+        <div class="setup-section">
+          <h3>選擇題數</h3>
+          <div class="setup-options" id="challenge-count-options">
+            <button class="btn btn-option" data-count="10" onclick="selectChallengeCount(10)">10 題</button>
+            <button class="btn btn-option active" data-count="20" onclick="selectChallengeCount(20)">20 題</button>
+            <button class="btn btn-option" data-count="30" onclick="selectChallengeCount(30)">30 題</button>
+          </div>
+        </div>
+        <button class="btn btn-accent btn-lg btn-block" onclick="startChallengeGame()" style="margin-top:24px">開始挑戰！</button>
+      </div>
+    </section>
+    <section id="page-challenge-game" class="page"></section>
+    <section id="page-challenge-result" class="page">
+      <div class="result-container">
+        <div class="result-score">
+          <h2>挑戰結束！</h2>
+          <div class="score-display" id="result-score"></div>
+          <div class="score-rate" id="result-rate"></div>
+        </div>
+        <div class="result-leaderboard">
+          <h3>🏆 排行榜</h3>
+          <table id="leaderboard-table"></table>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-accent btn-lg" onclick="startChallengeGame()">再挑戰一次</button>
+          <button class="btn btn-secondary btn-lg" onclick="showPage('page-home')">回首頁</button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -1221,6 +1518,322 @@
             '<div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:' + (total ? (done/total*100) : 0) + '%"></div></div>' +
           '</div></div>';
       }).join('');
+    }
+
+    // ===== Game State =====
+    let gameState = {
+      mode: '',
+      quizType: '',
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      total: 0,
+      answers: []
+    };
+
+    // ===== Answer Checking =====
+    function checkZh2En(correctEn, userInput) {
+      return correctEn.toLowerCase().replace(/\s+/g, ' ').trim() ===
+             userInput.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    async function checkSemanticMatch(correctZh, userInput) {
+      const input = userInput.trim();
+      if (!input) return false;
+      const parts = correctZh.split(/[、，,]/);
+      return parts.some(part => {
+        const p = part.trim();
+        return p.includes(input) || input.includes(p);
+      });
+    }
+
+    function checkChoice(selectedId, correctId) {
+      return selectedId === correctId;
+    }
+
+    // ===== Question Generation =====
+    function generateQuestions(words, quizType, mode) {
+      if (mode === 'practice') {
+        const playerName = document.getElementById('player-name').value.trim();
+        const progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName) || '{}');
+        return shuffle(words.filter(w => !progress[w.en + '_' + quizType]));
+      }
+      return shuffle(words);
+    }
+
+    function generateChoiceOptions(correctWord, allWords, showEn) {
+      const distractors = randomPick(allWords, 3, [correctWord]);
+      const options = shuffle([correctWord, ...distractors]);
+      return options.map(w => ({
+        label: showEn ? w.zh : w.en,
+        value: w.id,
+        correct: w.id === correctWord.id
+      }));
+    }
+
+    // ===== Practice Game =====
+    function startPracticeGame(quizType) {
+      const selectedWords = WORDS.filter(w => selectedWordIds.has(w.id));
+      const questions = generateQuestions(selectedWords, quizType, 'practice');
+      if (questions.length === 0) {
+        alert('這個題型的選中單字都已經答對了！');
+        return;
+      }
+      gameState = {
+        mode: 'practice',
+        quizType: quizType,
+        questions: questions,
+        currentIndex: 0,
+        score: 0,
+        total: questions.length,
+        answers: []
+      };
+      renderGameQuestion();
+      showPage('page-practice-game');
+    }
+
+    // ===== Game Rendering =====
+    function renderGameQuestion() {
+      const { quizType, questions, currentIndex, mode } = gameState;
+      if (currentIndex >= questions.length) {
+        if (mode === 'challenge') {
+          renderChallengeResult();
+          showPage('page-challenge-result');
+          return;
+        }
+        showPracticeComplete();
+        return;
+      }
+
+      const word = questions[currentIndex];
+      const questionEl = document.getElementById('game-question');
+      const answerEl = document.getElementById('game-answer');
+      const actionsEl = document.getElementById('game-actions');
+      const feedbackEl = document.getElementById('game-feedback');
+      feedbackEl.innerHTML = '';
+      actionsEl.innerHTML = '';
+
+      document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
+      const remainText = mode === 'practice' ? '還剩 ' + (questions.length - currentIndex) + ' 個需練習' : '得分: ' + gameState.score;
+      document.getElementById('game-remaining').textContent = remainText;
+      document.getElementById('game-progress-bar').style.width = (currentIndex / questions.length * 100) + '%';
+
+      if (quizType === 'zh2en') {
+        questionEl.innerHTML = '<div class="question-prompt">請寫出英文</div><div class="question-word">' + word.zh + '</div>';
+        answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" placeholder="輸入英文..." autofocus>' +
+          '<button class="btn btn-primary" onclick="submitAnswer()">確定</button>';
+        setTimeout(() => { const inp = document.getElementById('user-input'); if (inp) inp.focus(); }, 100);
+        document.getElementById('user-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') submitAnswer(); });
+      } else if (quizType === 'en2zh') {
+        questionEl.innerHTML = '<div class="question-prompt">請寫出中文意思</div><div class="question-word">' + word.en + '</div>';
+        answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" placeholder="輸入中文..." autofocus>' +
+          '<button class="btn btn-primary" onclick="submitAnswer()">確定</button>';
+        setTimeout(() => { const inp = document.getElementById('user-input'); if (inp) inp.focus(); }, 100);
+        document.getElementById('user-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') submitAnswer(); });
+      } else {
+        const showEn = Math.random() > 0.5;
+        questionEl.innerHTML = '<div class="question-prompt">' + (showEn ? '這個字的中文是？' : '這個字的英文是？') + '</div>' +
+          '<div class="question-word">' + (showEn ? word.en : word.zh) + '</div>';
+        const options = generateChoiceOptions(word, WORDS, showEn);
+        answerEl.innerHTML = options.map(opt =>
+          '<button class="btn-choice" data-value="' + opt.value + '" data-correct="' + opt.correct + '" onclick="submitChoice(' + opt.value + ')">' + opt.label + '</button>'
+        ).join('');
+      }
+    }
+
+    async function submitAnswer() {
+      const inputEl = document.getElementById('user-input');
+      if (!inputEl) return;
+      const input = inputEl.value;
+      if (!input.trim()) return;
+      inputEl.disabled = true;
+
+      const word = gameState.questions[gameState.currentIndex];
+      let correct = false;
+      let correctAnswer = '';
+
+      if (gameState.quizType === 'zh2en') {
+        correct = checkZh2En(word.en, input);
+        correctAnswer = word.en;
+      } else {
+        correct = await checkSemanticMatch(word.zh, input);
+        correctAnswer = word.zh;
+      }
+
+      showFeedback(correct, correctAnswer);
+      handleAnswer(word, correct);
+    }
+
+    function submitChoice(selectedId) {
+      const word = gameState.questions[gameState.currentIndex];
+      const correct = selectedId === word.id;
+      const correctAnswer = word.en + ' = ' + word.zh;
+
+      // Highlight buttons
+      document.querySelectorAll('.btn-choice').forEach(btn => {
+        btn.disabled = true;
+        if (parseInt(btn.dataset.value) === word.id) {
+          btn.classList.add('correct');
+        } else if (parseInt(btn.dataset.value) === selectedId && !correct) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      showFeedback(correct, correctAnswer);
+      handleAnswer(word, correct);
+    }
+
+    function showFeedback(correct, correctAnswer) {
+      const feedback = document.getElementById('game-feedback');
+      if (correct) {
+        feedback.innerHTML = '<div class="feedback-correct">✅ 答對了！</div>';
+      } else {
+        feedback.innerHTML = '<div class="feedback-wrong">❌ 答錯了<br>正確答案：<strong>' + correctAnswer + '</strong></div>';
+      }
+    }
+
+    function handleAnswer(word, correct) {
+      gameState.answers.push({ word: word, correct: correct });
+      if (correct) gameState.score++;
+
+      if (gameState.mode === 'practice' && correct) {
+        const playerName = document.getElementById('player-name').value.trim();
+        const progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName) || '{}');
+        progress[word.en + '_' + gameState.quizType] = true;
+        localStorage.setItem('vocabGame_practice_' + playerName, JSON.stringify(progress));
+      }
+
+      const actionsEl = document.getElementById('game-actions');
+      if (correct && gameState.mode === 'practice') {
+        setTimeout(function() {
+          gameState.currentIndex++;
+          renderGameQuestion();
+        }, 1000);
+      } else {
+        actionsEl.innerHTML = '<button class="btn btn-primary" onclick="nextQuestion()">下一題 →</button>';
+      }
+    }
+
+    function nextQuestion() {
+      gameState.currentIndex++;
+      renderGameQuestion();
+    }
+
+    function exitGame() {
+      if (confirm('確定要離開嗎？')) {
+        if (gameState.mode === 'practice') {
+          renderPracticeType();
+          showPage('page-practice-type');
+        } else {
+          showPage('page-home');
+        }
+      }
+    }
+
+    function showPracticeComplete() {
+      const { score, total } = gameState;
+      document.getElementById('game-question').innerHTML =
+        '<div class="complete-message">' +
+        '<div class="complete-icon">🎉</div>' +
+        '<h2>練習完成！</h2>' +
+        '<p>答對 ' + score + ' / ' + total + ' 題</p></div>';
+      document.getElementById('game-answer').innerHTML = '';
+      document.getElementById('game-feedback').innerHTML = '';
+      document.getElementById('game-actions').innerHTML =
+        '<button class="btn btn-primary" onclick="renderPracticeType(); showPage(\'page-practice-type\')">回題型選擇</button> ' +
+        '<button class="btn btn-secondary" onclick="showPage(\'page-home\')">回首頁</button>';
+    }
+
+    // ===== Challenge Mode =====
+    let challengeConfig = { type: 'zh2en', count: 20 };
+
+    function renderChallengeSetup() {
+      challengeConfig = { type: 'zh2en', count: 20 };
+      // Reset button states
+      document.querySelectorAll('#challenge-type-options .btn-option').forEach(b => b.classList.remove('active'));
+      document.querySelector('#challenge-type-options [data-type="zh2en"]').classList.add('active');
+      document.querySelectorAll('#challenge-count-options .btn-option').forEach(b => b.classList.remove('active'));
+      document.querySelector('#challenge-count-options [data-count="20"]').classList.add('active');
+    }
+
+    function selectChallengeType(type) {
+      challengeConfig.type = type;
+      document.querySelectorAll('#challenge-type-options .btn-option').forEach(b => b.classList.remove('active'));
+      document.querySelector('#challenge-type-options [data-type="' + type + '"]').classList.add('active');
+    }
+
+    function selectChallengeCount(count) {
+      challengeConfig.count = count;
+      document.querySelectorAll('#challenge-count-options .btn-option').forEach(b => b.classList.remove('active'));
+      document.querySelector('#challenge-count-options [data-count="' + count + '"]').classList.add('active');
+    }
+
+    function startChallengeGame() {
+      const questions = shuffle([...WORDS]).slice(0, challengeConfig.count);
+      gameState = {
+        mode: 'challenge',
+        quizType: challengeConfig.type,
+        questions: questions,
+        currentIndex: 0,
+        score: 0,
+        total: challengeConfig.count,
+        answers: []
+      };
+      renderGameQuestion();
+      showPage('page-practice-game');
+    }
+
+    // ===== Leaderboard =====
+    async function saveScore(data) {
+      const board = JSON.parse(localStorage.getItem('vocabGame_leaderboard') || '[]');
+      board.push(data);
+      localStorage.setItem('vocabGame_leaderboard', JSON.stringify(board));
+    }
+
+    async function getLeaderboard(quizType, total) {
+      const board = JSON.parse(localStorage.getItem('vocabGame_leaderboard') || '[]');
+      return board
+        .filter(e => e.quizType === quizType && e.total === total)
+        .sort((a, b) => b.score - a.score || a.timestamp - b.timestamp)
+        .slice(0, 10);
+    }
+
+    async function renderChallengeResult() {
+      const { score, total, quizType } = gameState;
+      const rate = Math.round((score / total) * 100);
+      const playerName = document.getElementById('player-name').value.trim();
+
+      document.getElementById('result-score').textContent = score + ' / ' + total;
+      document.getElementById('result-rate').textContent = '正確率 ' + rate + '%';
+
+      await saveScore({
+        playerName: playerName,
+        score: score,
+        total: total,
+        quizType: quizType,
+        timestamp: Date.now()
+      });
+
+      const entries = await getLeaderboard(quizType, total);
+      const typeLabels = { zh2en: '中翻英', en2zh: '英翻中', choice: '選擇題' };
+
+      const table = document.getElementById('leaderboard-table');
+      let tableHtml = '<caption>' + typeLabels[quizType] + ' ' + total + ' 題 Top 10</caption>' +
+        '<thead><tr><th>名次</th><th>玩家</th><th>分數</th><th>正確率</th></tr></thead><tbody>';
+
+      const currentTimestamp = Date.now();
+      entries.forEach((e, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+        const isMe = e.playerName === playerName && Math.abs(e.timestamp - currentTimestamp) < 5000;
+        tableHtml += '<tr class="' + (isMe ? 'highlight' : '') + '">' +
+          '<td>' + medal + '</td>' +
+          '<td>' + e.playerName + '</td>' +
+          '<td>' + e.score + '/' + e.total + '</td>' +
+          '<td>' + Math.round((e.score/e.total)*100) + '%</td></tr>';
+      });
+
+      tableHtml += '</tbody>';
+      table.innerHTML = tableHtml;
     }
 
     // ===== Page Switching =====
