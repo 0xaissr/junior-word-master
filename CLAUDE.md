@@ -50,3 +50,12 @@ async function getLeaderboard(quizType, total) → array
 ## 視覺風格
 
 可愛卡通風：鮮豔色彩（藍/綠/橘）、圓角卡片、大字體、答對答錯動畫回饋。
+
+## 開發規則
+
+- **每次修改都必須 commit**，commit message 用英文，格式遵循 conventional commits（feat/fix/docs/refactor 等）
+- **每次修改都必須更新 LOG.md**，記錄變更內容（用中文），格式如下：
+  ```
+  ## YYYY-MM-DD
+  - [commit hash 前 7 碼] 變更說明
+  ```
