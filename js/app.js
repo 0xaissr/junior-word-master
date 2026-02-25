@@ -676,7 +676,7 @@ function startPracticeGame(quizType) {
   };
   incrementPlayCount(document.getElementById('player-name').value.trim());
   document.getElementById('game-row-timer').style.display = 'none';
-  document.querySelector('.game-exit-practice').style.display = 'flex';
+  document.querySelector('.game-exit-practice').style.visibility = 'visible';
   renderGameQuestion();
   showPage('page-practice-game');
 }
@@ -945,7 +945,7 @@ function startChallengeGame() {
 
   incrementPlayCount(document.getElementById('player-name').value.trim());
   document.getElementById('game-row-timer').style.display = 'flex';
-  document.querySelector('.game-exit-practice').style.display = 'none';
+  document.querySelector('.game-exit-practice').style.visibility = 'hidden';
   startChallengeTimer(timeLimit);
   renderGameQuestion();
   showPage('page-practice-game');
@@ -967,8 +967,6 @@ function startChallengeTimer(seconds) {
 
 function stopChallengeTimer() {
   if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
-  var timerEl = document.getElementById('game-timer');
-  if (timerEl) timerEl.style.display = 'none';
 }
 
 function updateTimerDisplay() {
