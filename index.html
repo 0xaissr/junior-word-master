@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>English Easy Go 單字王</title>
+  <title>國中小單字王</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,12 +11,22 @@
     <!-- ===== Home Page ===== -->
     <section id="page-home" class="page active">
       <div class="title-area">
-        <h1 class="app-title">English Easy Go</h1>
-        <p class="app-subtitle">單字王 挑戰賽</p>
+        <h1 class="app-title" style="font-size:2.5rem">國中小單字王</h1>
+        <p class="app-subtitle">挑戰你的單字力！</p>
       </div>
       <div class="card">
         <label class="input-label" for="player-name">你的名字</label>
         <input type="text" id="player-name" class="game-input" placeholder="輸入玩家名稱..." maxlength="20">
+
+        <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()" style="margin-top:12px; padding:12px; background:var(--bg-light); border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:10px; border:2px dashed var(--border)">
+          <span id="home-deck-icon" style="font-size:1.5rem">📚</span>
+          <div style="flex:1">
+            <div id="home-deck-name" style="font-weight:600">尚未選擇題庫</div>
+            <div id="home-deck-stats" style="font-size:0.8rem; color:var(--text-light)">點擊選擇題庫</div>
+          </div>
+          <span style="color:var(--text-light)">▶</span>
+        </div>
+
         <div style="display:flex; gap:10px; margin-top:16px">
           <button class="btn btn-primary" style="flex:1" onclick="startPractice()">練習模式</button>
           <button class="btn btn-accent" style="flex:1" onclick="startChallenge()">挑戰模式</button>
@@ -26,7 +36,7 @@
 
     <!-- ===== Deck Selection Page ===== -->
     <section id="page-deck-select" class="page">
-      <button class="btn btn-back" onclick="showPage('page-home')">← 回首頁</button>
+      <button class="btn btn-back" onclick="backFromDeckSelect()">← 回首頁</button>
       <h2 class="page-title">選擇題庫</h2>
       <div id="deck-list" class="deck-list"></div>
 
@@ -67,9 +77,6 @@
       <button class="btn btn-back" onclick="showPage('page-practice-select')">← 回單字選擇</button>
       <h2 class="page-title">選擇題型</h2>
       <div id="type-cards" class="type-cards"></div>
-      <div style="margin-top:16px; text-align:center">
-        <button class="btn btn-outline btn-sm" onclick="resetPracticeProgress()">重置練習進度</button>
-      </div>
     </section>
 
     <!-- ===== Game Page (shared by Practice & Challenge) ===== -->
@@ -95,11 +102,11 @@
       <button class="btn btn-back" onclick="showPage('page-deck-select')">← 回題庫選擇</button>
       <h2 class="page-title">挑戰模式設定</h2>
       <div class="card">
-        <h3 style="margin-bottom:12px">題型</h3>
+        <h3 style="margin-bottom:12px">題型（可多選）</h3>
         <div id="challenge-type-options" class="option-group">
-          <button class="btn-option active" data-type="zh2en" onclick="selectChallengeType('zh2en')">✏️ 中翻英</button>
-          <button class="btn-option" data-type="en2zh" onclick="selectChallengeType('en2zh')">📝 英翻中</button>
-          <button class="btn-option" data-type="choice" onclick="selectChallengeType('choice')">🔤 選擇題</button>
+          <button class="btn-option active" data-type="zh2en" onclick="toggleChallengeType('zh2en')">✏️ 中翻英</button>
+          <button class="btn-option" data-type="en2zh" onclick="toggleChallengeType('en2zh')">📝 英翻中</button>
+          <button class="btn-option" data-type="choice" onclick="toggleChallengeType('choice')">🔤 選擇題</button>
         </div>
         <h3 style="margin:16px 0 12px">題數</h3>
         <div id="challenge-count-options" class="option-group">

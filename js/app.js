@@ -45,6 +45,18 @@ function showPage(pageId) {
 window.addEventListener('DOMContentLoaded', function() {
   const saved = localStorage.getItem('vocabGame_playerName');
   if (saved) document.getElementById('player-name').value = saved;
+
+  // Restore remembered deck
+  const savedDeckId = localStorage.getItem('vocabGame_currentDeckId');
+  if (savedDeckId) {
+    const allDecks = getAllDecks();
+    const deck = allDecks.find(function(d) { return d.id === savedDeckId; });
+    if (deck) {
+      currentDeck = deck;
+      currentWords = deck.words;
+      updateHomeDeckInfo();
+    }
+  }
 });
 
 function getPlayerName() {
@@ -60,26 +72,86 @@ function getPlayerName() {
 function startPractice() {
   if (!getPlayerName()) return;
   pendingMode = 'practice';
-  renderDeckSelect();
-  showPage('page-deck-select');
+  if (currentDeck) {
+    // Already have a deck selected, go directly to word selection
+    renderPracticeSelect();
+    showPage('page-practice-select');
+  } else {
+    renderDeckSelect();
+    showPage('page-deck-select');
+  }
 }
 
 function startChallenge() {
   if (!getPlayerName()) return;
   pendingMode = 'challenge';
+  if (currentDeck) {
+    renderChallengeSetup();
+    showPage('page-challenge-setup');
+  } else {
+    renderDeckSelect();
+    showPage('page-deck-select');
+  }
+}
+
+function goToDeckSelect() {
+  pendingMode = '';
   renderDeckSelect();
   showPage('page-deck-select');
+}
+
+function updateHomeDeckInfo() {
+  const icons = getDeckIcons();
+  var nameEl = document.getElementById('home-deck-name');
+  var statsEl = document.getElementById('home-deck-stats');
+  var iconEl = document.getElementById('home-deck-icon');
+  var infoBar = document.getElementById('home-deck-info');
+
+  if (!currentDeck) {
+    nameEl.textContent = '尚未選擇題庫';
+    statsEl.textContent = '點擊選擇題庫';
+    iconEl.textContent = '📚';
+    infoBar.style.borderStyle = 'dashed';
+    return;
+  }
+
+  iconEl.textContent = icons[currentDeck.id] || '📄';
+  nameEl.textContent = currentDeck.name;
+  infoBar.style.borderStyle = 'solid';
+  infoBar.style.borderColor = 'var(--primary)';
+
+  // Calculate mastery
+  var playerName = document.getElementById('player-name').value.trim();
+  if (playerName) {
+    var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
+    var totalWords = currentDeck.words.length;
+    // Count unique words mastered (word mastered = answered correctly in at least one quiz type)
+    var masteredWords = new Set();
+    Object.keys(progress).forEach(function(key) {
+      var wordPart = key.replace(/_zh2en$|_en2zh$|_choice$/, '');
+      masteredWords.add(wordPart);
+    });
+    var mastered = masteredWords.size;
+    statsEl.textContent = '已掌握 ' + mastered + ' / ' + totalWords + ' 個單字';
+  } else {
+    statsEl.textContent = totalWords + ' 個單字';
+  }
+}
+
+function getDeckIcons() {
+  return { yilan400: '🏫', basic300: '📚', moe1200: '🎓', hualien300: '🌊', hualien600: '🌊', geptkids: '🏆', taichung300: '🏙️', jh2000: '📖', adv800: '📕' };
 }
 
 // ===== Deck Selection =====
 function renderDeckSelect() {
   const allDecks = getAllDecks();
   const list = document.getElementById('deck-list');
-  const icons = { yilan400: '🏫', basic300: '📚', moe1200: '🎓', hualien300: '🌊', hualien600: '🌊', geptkids: '🏆', taichung300: '🏙️' };
+  const icons = getDeckIcons();
+  const builtinIds = new Set(BUILTIN_DECKS.map(function(d) { return d.id; }));
   let html = '';
 
   allDecks.forEach(function(deck) {
-    const isCustom = !deck.id.startsWith('yilan') && !deck.id.startsWith('basic') && !deck.id.startsWith('moe');
+    const isCustom = !builtinIds.has(deck.id);
     const icon = icons[deck.id] || '📄';
     html += '<div class="deck-card" onclick="selectDeck(\'' + deck.id + '\')">' +
       '<div class="deck-icon">' + icon + '</div>' +
@@ -101,13 +173,24 @@ function selectDeck(deckId) {
   if (!currentDeck) return;
   currentWords = currentDeck.words;
 
+  // Remember selected deck
+  localStorage.setItem('vocabGame_currentDeckId', deckId);
+  updateHomeDeckInfo();
+
   if (pendingMode === 'practice') {
     renderPracticeSelect();
     showPage('page-practice-select');
-  } else {
+  } else if (pendingMode === 'challenge') {
     renderChallengeSetup();
     showPage('page-challenge-setup');
+  } else {
+    // Came from home page deck button (no pending mode), go back to home
+    showPage('page-home');
   }
+}
+
+function backFromDeckSelect() {
+  showPage('page-home');
 }
 
 function confirmDeleteDeck(deckId) {
@@ -286,6 +369,8 @@ function confirmSelection() {
 }
 
 // ===== Practice Type Selection =====
+let selectedPracticeTypes = new Set();
+
 function renderPracticeType() {
   var playerName = document.getElementById('player-name').value.trim();
   var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
@@ -295,13 +380,15 @@ function renderPracticeType() {
     { key: 'en2zh', label: '英翻中', desc: '看英文，寫中文', icon: '📝' },
     { key: 'choice', label: '選擇題', desc: '四選一', icon: '🔤' }
   ];
+  selectedPracticeTypes = new Set();
   var cards = document.getElementById('type-cards');
   cards.innerHTML = types.map(function(t) {
     var remaining = selectedWords.filter(function(w) { return !progress[w.en + '_' + t.key]; }).length;
     var total = selectedWords.length;
     var done = total - remaining;
     var allDone = remaining === 0;
-    return '<div class="type-card ' + (allDone ? 'completed' : '') + '" onclick="' + (allDone ? '' : "startPracticeGame('" + t.key + "')") + '">' +
+    return '<div class="type-card ' + (allDone ? 'completed' : '') + '" data-type="' + t.key + '" onclick="togglePracticeType(\'' + t.key + '\')">' +
+      '<div class="type-check" style="position:absolute;top:8px;right:8px;font-size:1.2rem;display:none">✅</div>' +
       '<div class="type-icon">' + t.icon + '</div>' +
       '<h3>' + t.label + '</h3>' +
       '<p>' + t.desc + '</p>' +
@@ -312,6 +399,76 @@ function renderPracticeType() {
         '<div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:' + (total ? (done/total*100) : 0) + '%"></div></div>' +
       '</div></div>';
   }).join('');
+
+  // Add start button
+  cards.innerHTML += '<div style="margin-top:16px; text-align:center">' +
+    '<button class="btn btn-primary" id="start-practice-btn" onclick="startMultiPractice()" disabled>請選擇題型（可多選）</button>' +
+    '</div>';
+}
+
+function togglePracticeType(typeKey) {
+  var card = document.querySelector('.type-card[data-type="' + typeKey + '"]');
+  if (!card || card.classList.contains('completed')) return;
+
+  if (selectedPracticeTypes.has(typeKey)) {
+    selectedPracticeTypes.delete(typeKey);
+    card.classList.remove('selected');
+    card.querySelector('.type-check').style.display = 'none';
+  } else {
+    selectedPracticeTypes.add(typeKey);
+    card.classList.add('selected');
+    card.querySelector('.type-check').style.display = 'block';
+  }
+
+  var btn = document.getElementById('start-practice-btn');
+  if (selectedPracticeTypes.size > 0) {
+    var labels = [];
+    if (selectedPracticeTypes.has('zh2en')) labels.push('中翻英');
+    if (selectedPracticeTypes.has('en2zh')) labels.push('英翻中');
+    if (selectedPracticeTypes.has('choice')) labels.push('選擇題');
+    btn.textContent = '開始練習（' + labels.join(' + ') + '）→';
+    btn.disabled = false;
+  } else {
+    btn.textContent = '請選擇題型（可多選）';
+    btn.disabled = true;
+  }
+}
+
+function startMultiPractice() {
+  if (selectedPracticeTypes.size === 0) return;
+  var types = [...selectedPracticeTypes];
+  if (types.length === 1) {
+    startPracticeGame(types[0]);
+  } else {
+    // Mix questions from multiple quiz types
+    var selectedWords = currentWords.filter(function(w) { return selectedWordIds.has(w.id); });
+    var playerName = document.getElementById('player-name').value.trim();
+    var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
+    var allQuestions = [];
+    types.forEach(function(qt) {
+      var words = selectedWords.filter(function(w) { return !progress[w.en + '_' + qt]; });
+      words.forEach(function(w) {
+        allQuestions.push({ word: w, quizType: qt });
+      });
+    });
+    if (allQuestions.length === 0) {
+      alert('所有選中的題型都已完成！');
+      return;
+    }
+    allQuestions = shuffle(allQuestions);
+    gameState = {
+      mode: 'practice',
+      quizType: 'mixed',
+      mixedQuestions: allQuestions,
+      questions: allQuestions.map(function(q) { return q.word; }),
+      currentIndex: 0,
+      score: 0,
+      total: allQuestions.length,
+      answers: []
+    };
+    renderGameQuestion();
+    showPage('page-practice-game');
+  }
 }
 
 function resetPracticeProgress() {
@@ -388,6 +545,12 @@ function startPracticeGame(quizType) {
 // ===== Game Rendering =====
 function renderGameQuestion() {
   var quizType = gameState.quizType;
+  // For mixed mode, get the quiz type from the mixed question list
+  if (quizType === 'mixed' && gameState.mixedQuestions) {
+    if (gameState.currentIndex < gameState.mixedQuestions.length) {
+      quizType = gameState.mixedQuestions[gameState.currentIndex].quizType;
+    }
+  }
   var questions = gameState.questions;
   var currentIndex = gameState.currentIndex;
   var mode = gameState.mode;
@@ -449,7 +612,11 @@ async function submitAnswer() {
   var correct = false;
   var correctAnswer = '';
 
-  if (gameState.quizType === 'zh2en') {
+  var activeType = gameState.quizType;
+  if (activeType === 'mixed' && gameState.mixedQuestions) {
+    activeType = gameState.mixedQuestions[gameState.currentIndex].quizType;
+  }
+  if (activeType === 'zh2en') {
     correct = checkZh2En(word.en, input);
     correctAnswer = word.en;
   } else {
@@ -495,7 +662,11 @@ function handleAnswer(word, correct) {
   if (gameState.mode === 'practice' && correct) {
     var playerName = document.getElementById('player-name').value.trim();
     var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
-    progress[word.en + '_' + gameState.quizType] = true;
+    var actualType = gameState.quizType;
+    if (actualType === 'mixed' && gameState.mixedQuestions) {
+      actualType = gameState.mixedQuestions[gameState.currentIndex].quizType;
+    }
+    progress[word.en + '_' + actualType] = true;
     localStorage.setItem('vocabGame_practice_' + playerName + '_' + currentDeck.id, JSON.stringify(progress));
   }
 
@@ -543,17 +714,26 @@ function showPracticeComplete() {
 
 // ===== Challenge Mode =====
 function renderChallengeSetup() {
-  challengeConfig = { type: 'zh2en', count: 20 };
+  challengeConfig = { types: new Set(['zh2en']), count: 20 };
   document.querySelectorAll('#challenge-type-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
   document.querySelector('#challenge-type-options [data-type="zh2en"]').classList.add('active');
   document.querySelectorAll('#challenge-count-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
   document.querySelector('#challenge-count-options [data-count="20"]').classList.add('active');
 }
 
-function selectChallengeType(type) {
-  challengeConfig.type = type;
-  document.querySelectorAll('#challenge-type-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelector('#challenge-type-options [data-type="' + type + '"]').classList.add('active');
+function toggleChallengeType(type) {
+  if (!challengeConfig.types) challengeConfig.types = new Set(['zh2en']);
+  var btn = document.querySelector('#challenge-type-options [data-type="' + type + '"]');
+  if (challengeConfig.types.has(type)) {
+    if (challengeConfig.types.size > 1) {
+      challengeConfig.types.delete(type);
+      btn.classList.remove('active');
+    }
+    // Don't allow deselecting last type
+  } else {
+    challengeConfig.types.add(type);
+    btn.classList.add('active');
+  }
 }
 
 function selectChallengeCount(count) {
@@ -563,17 +743,37 @@ function selectChallengeCount(count) {
 }
 
 function startChallengeGame() {
+  var types = challengeConfig.types ? [...challengeConfig.types] : ['zh2en'];
   var count = Math.min(challengeConfig.count, currentWords.length);
-  var questions = shuffle([...currentWords]).slice(0, count);
-  gameState = {
-    mode: 'challenge',
-    quizType: challengeConfig.type,
-    questions: questions,
-    currentIndex: 0,
-    score: 0,
-    total: count,
-    answers: []
-  };
+  var selectedQuestions = shuffle([...currentWords]).slice(0, count);
+
+  if (types.length === 1) {
+    gameState = {
+      mode: 'challenge',
+      quizType: types[0],
+      questions: selectedQuestions,
+      currentIndex: 0,
+      score: 0,
+      total: count,
+      answers: []
+    };
+  } else {
+    // Mixed types: assign random type to each question
+    var mixedQuestions = selectedQuestions.map(function(w) {
+      var randomType = types[Math.floor(Math.random() * types.length)];
+      return { word: w, quizType: randomType };
+    });
+    gameState = {
+      mode: 'challenge',
+      quizType: 'mixed',
+      mixedQuestions: mixedQuestions,
+      questions: mixedQuestions.map(function(q) { return q.word; }),
+      currentIndex: 0,
+      score: 0,
+      total: count,
+      answers: []
+    };
+  }
   renderGameQuestion();
   showPage('page-practice-game');
 }

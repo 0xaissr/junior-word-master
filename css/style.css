@@ -529,6 +529,11 @@ select:focus {
   cursor: pointer;
   transition: all 0.2s;
   border: 3px solid transparent;
+  position: relative;
+}
+.type-card.selected {
+  border-color: var(--primary);
+  background: rgba(74, 144, 217, 0.05);
 }
 .type-card:hover {
   transform: translateY(-3px);
