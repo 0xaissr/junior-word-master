@@ -1234,17 +1234,28 @@ function renderHomeLbList() {
 
   var playerName = document.getElementById('player-name').value.trim();
   var medals = ['🥇', '🥈', '🥉'];
-  var html = '';
-  entries.forEach(function(e, i) {
+  var leftCol = entries.slice(0, 5);
+  var rightCol = entries.slice(5, 10);
+
+  function buildRow(e, i) {
     var rank = i < 3 ? medals[i] : (i + 1);
     var isMe = e.playerName === playerName;
-    html += '<div class="home-lb-row' + (isMe ? ' is-me' : '') + '">' +
+    return '<div class="home-lb-row' + (isMe ? ' is-me' : '') + '">' +
       '<span class="home-lb-rank">' + rank + '</span>' +
       '<span class="home-lb-name">' + e.playerName + '</span>' +
-      '<span class="home-lb-score">' + e.score + ' 分</span>' +
+      '<span class="home-lb-score">' + e.score + '</span>' +
     '</div>';
-  });
-  listEl.innerHTML = html;
+  }
+
+  var leftHtml = '';
+  leftCol.forEach(function(e, i) { leftHtml += buildRow(e, i); });
+  var rightHtml = '';
+  rightCol.forEach(function(e, i) { rightHtml += buildRow(e, i + 5); });
+
+  listEl.innerHTML = '<div class="home-lb-columns">' +
+    '<div>' + leftHtml + '</div>' +
+    '<div>' + rightHtml + '</div>' +
+  '</div>';
 }
 
 // ===== Mastered Words Page =====
