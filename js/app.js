@@ -75,7 +75,7 @@ function startChallenge() {
 function renderDeckSelect() {
   const allDecks = getAllDecks();
   const list = document.getElementById('deck-list');
-  const icons = { yilan400: '🏫', basic300: '📚', moe1200: '🎓' };
+  const icons = { yilan400: '🏫', basic300: '📚', moe1200: '🎓', hualien300: '🌊', hualien600: '🌊', geptkids: '🏆', taichung300: '🏙️' };
   let html = '';
 
   allDecks.forEach(function(deck) {
