@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>國中小單字王</title>
+  <title>國中小英文單字王</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,20 +11,20 @@
     <!-- ===== Home Page ===== -->
     <section id="page-home" class="page active">
       <div class="title-area">
-        <h1 class="app-title" style="font-size:2.5rem">國中小單字王</h1>
+        <h1 class="app-title" style="font-size:2.5rem">國中小英文單字王</h1>
         <p class="app-subtitle">挑戰你的單字力！</p>
       </div>
       <div class="card">
         <label class="input-label" for="player-name">你的名字</label>
         <input type="text" id="player-name" class="game-input" placeholder="輸入玩家名稱..." maxlength="20">
 
-        <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()" style="margin-top:12px; padding:12px; background:var(--bg-light); border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:10px; border:2px dashed var(--border)">
+        <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()" style="margin-top:12px; padding:12px; background:var(--bg-glass); border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; gap:10px; border:1px dashed var(--border-glass)">
           <span id="home-deck-icon" style="font-size:1.5rem">📚</span>
           <div style="flex:1">
             <div id="home-deck-name" style="font-weight:600">尚未選擇題庫</div>
-            <div id="home-deck-stats" style="font-size:0.8rem; color:var(--text-light)">點擊選擇題庫</div>
+            <div id="home-deck-stats" style="font-size:0.8rem; color:var(--text-muted)">點擊選擇題庫</div>
           </div>
-          <span style="color:var(--text-light)">▶</span>
+          <span style="color:var(--text-muted)">▶</span>
         </div>
 
         <div style="display:flex; gap:10px; margin-top:16px">
@@ -50,7 +50,7 @@
           <select id="deck-dropdown" class="game-input" onchange="onDeckDropdownChange()" style="width:100%; cursor:pointer">
             <option value="">-- 請選擇題庫 --</option>
           </select>
-          <div id="deck-detail" style="margin-top:12px; font-size:0.9rem; color:var(--text-light)"></div>
+          <div id="deck-detail" style="margin-top:12px; font-size:0.9rem; color:var(--text-muted)"></div>
         </div>
 
         <div id="custom-upload-area" style="display:none; margin-top:16px">
@@ -58,7 +58,7 @@
           <div class="section-divider">上傳新題庫</div>
           <div style="text-align:center">
             <input type="text" id="csv-deck-name" class="game-input" placeholder="題庫名稱（必填）" style="margin-bottom:8px">
-            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:8px">格式：每行一組 <code>英文,中文</code></p>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px">格式：每行一組 <code>英文,中文</code></p>
             <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-file-input').click()">選擇 CSV 檔案</button>
             <input type="file" id="csv-file-input" accept=".csv,.txt" onchange="handleCSVUpload(event)" style="display:none">
             <div id="csv-preview" style="margin-top:12px"></div>

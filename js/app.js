@@ -118,7 +118,7 @@ function updateHomeDeckInfo() {
   iconEl.textContent = icons[currentDeck.id] || '📄';
   nameEl.textContent = currentDeck.name;
   infoBar.style.borderStyle = 'solid';
-  infoBar.style.borderColor = 'var(--primary)';
+  infoBar.style.borderColor = 'var(--accent)';
 
   // Calculate mastery
   var playerName = document.getElementById('player-name').value.trim();
@@ -238,12 +238,12 @@ function renderCustomDeckList() {
   var customs = getCustomDecks();
   var listEl = document.getElementById('custom-deck-list');
   if (customs.length === 0) {
-    listEl.innerHTML = '<p style="text-align:center; color:var(--text-light)">尚無自訂題庫</p>';
+    listEl.innerHTML = '<p style="text-align:center; color:var(--text-muted)">尚無自訂題庫</p>';
     return;
   }
   listEl.innerHTML = customs.map(function(deck) {
-    return '<div style="display:flex; align-items:center; padding:10px; background:var(--bg-light); border-radius:8px; margin-bottom:8px; cursor:pointer" onclick="selectDeck(\'' + deck.id + '\')">' +
-      '<span style="flex:1; font-weight:600">' + deck.name + ' <span style="font-weight:normal; color:var(--text-light)">(' + deck.words.length + ' 字)</span></span>' +
+    return '<div style="display:flex; align-items:center; padding:10px; background:var(--bg-glass); border-radius:8px; margin-bottom:8px; cursor:pointer" onclick="selectDeck(\'' + deck.id + '\')">' +
+      '<span style="flex:1; font-weight:600">' + deck.name + ' <span style="font-weight:normal; color:var(--text-muted)">(' + deck.words.length + ' 字)</span></span>' +
       '<button class="btn btn-xs" onclick="event.stopPropagation(); confirmDeleteDeck(\'' + deck.id + '\')" style="color:var(--danger)">刪除</button>' +
     '</div>';
   }).join('');
@@ -299,7 +299,7 @@ function handleCSVUpload(event) {
     }
 
     preview.innerHTML = '<div style="color:var(--success)">解析成功！共 ' + words.length + ' 個單字</div>' +
-      '<div style="font-size:0.85rem; color:var(--text-light); margin-top:4px">前 5 個：' +
+      '<div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px">前 5 個：' +
       words.slice(0, 5).map(function(w) { return w.en + '=' + w.zh; }).join(', ') + '...</div>' +
       '<button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="saveCSVDeck()">儲存題庫</button>';
 
