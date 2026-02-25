@@ -1202,8 +1202,7 @@ function renderHomeLeaderboard() {
   var entries5 = getLeaderboard(currentDeck.id, 300);
 
   if (entries3.length === 0 && entries5.length === 0) {
-    var legacy = getLeaderboard(currentDeck.id);
-    if (legacy.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'none'; return;
   }
 
   var html = '<div class="home-lb-toggle">' +
@@ -1222,10 +1221,6 @@ function renderHomeLbList() {
   if (!listEl || !currentDeck) return;
 
   var entries = getLeaderboard(currentDeck.id, homeLbTime).slice(0, 10);
-  if (entries.length === 0) {
-    var legacy = getLeaderboard(currentDeck.id).slice(0, 10);
-    entries = legacy;
-  }
 
   if (entries.length === 0) {
     listEl.innerHTML = '<div class="home-lb-empty">尚無紀錄</div>';

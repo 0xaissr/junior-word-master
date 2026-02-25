@@ -452,8 +452,6 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 .home-lb-row.is-me {
   background: rgba(255, 140, 66, 0.18);
   font-weight: 700;
-  border: 2px solid var(--primary);
-  padding: 6px 8px;
 }
 .home-lb-rank {
   width: 28px;
