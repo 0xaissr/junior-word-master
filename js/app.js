@@ -131,8 +131,9 @@ function startChallenge() {
   if (!getPlayerName()) return;
   pendingMode = 'challenge';
   if (currentDeck) {
-    renderChallengeSetup();
-    showPage('page-challenge-setup');
+    // Start directly with defaults: zh2en + en2zh, 3 min
+    challengeConfig = { types: new Set(['zh2en', 'en2zh']), timeLimit: 180 };
+    startChallengeGame();
   } else {
     renderDeckSelect();
     showPage('page-deck-select');
@@ -307,8 +308,8 @@ function selectDeck(deckId) {
     renderPracticeSelect();
     showPage('page-practice-select');
   } else if (pendingMode === 'challenge') {
-    renderChallengeSetup();
-    showPage('page-challenge-setup');
+    challengeConfig = { types: new Set(['zh2en', 'en2zh']), timeLimit: 180 };
+    startChallengeGame();
   } else {
     // Came from home page deck button (no pending mode), go back to home
     showPage('page-home');
@@ -1184,53 +1185,66 @@ function renderHomeStats() {
   renderHomeLeaderboard();
 }
 
+var homeLbTime = 180;
+
+function switchHomeLbTime(time) {
+  homeLbTime = time;
+  document.querySelectorAll('.home-lb-toggle .btn-option').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('.home-lb-toggle [data-hlb-time="' + time + '"]').classList.add('active');
+  renderHomeLbList();
+}
+
 function renderHomeLeaderboard() {
   var container = document.getElementById('home-leaderboard');
   if (!currentDeck) { container.style.display = 'none'; return; }
 
-  var entries3 = getLeaderboard(currentDeck.id, 180).slice(0, 5);
-  var entries5 = getLeaderboard(currentDeck.id, 300).slice(0, 5);
+  var entries3 = getLeaderboard(currentDeck.id, 180);
+  var entries5 = getLeaderboard(currentDeck.id, 300);
 
   if (entries3.length === 0 && entries5.length === 0) {
-    var legacy = getLeaderboard(currentDeck.id).slice(0, 5);
+    var legacy = getLeaderboard(currentDeck.id);
     if (legacy.length === 0) { container.style.display = 'none'; return; }
-    entries3 = legacy;
   }
 
-  if (entries3.length === 0 && entries5.length === 0) {
-    container.style.display = 'none';
+  var html = '<div class="home-lb-toggle">' +
+    '<button class="btn-option' + (homeLbTime === 180 ? ' active' : '') + '" data-hlb-time="180" onclick="switchHomeLbTime(180)">3 分鐘</button>' +
+    '<button class="btn-option' + (homeLbTime === 300 ? ' active' : '') + '" data-hlb-time="300" onclick="switchHomeLbTime(300)">5 分鐘</button>' +
+    '</div>' +
+    '<div id="home-lb-list"></div>';
+
+  container.innerHTML = html;
+  container.style.display = 'block';
+  renderHomeLbList();
+}
+
+function renderHomeLbList() {
+  var listEl = document.getElementById('home-lb-list');
+  if (!listEl || !currentDeck) return;
+
+  var entries = getLeaderboard(currentDeck.id, homeLbTime).slice(0, 10);
+  if (entries.length === 0) {
+    var legacy = getLeaderboard(currentDeck.id).slice(0, 10);
+    entries = legacy;
+  }
+
+  if (entries.length === 0) {
+    listEl.innerHTML = '<div class="home-lb-empty">尚無紀錄</div>';
     return;
   }
 
   var playerName = document.getElementById('player-name').value.trim();
   var medals = ['🥇', '🥈', '🥉'];
-
-  function buildColumn(title, entries) {
-    var html = '<div class="home-lb-col"><div class="home-lb-col-title">' + title + '</div>';
-    if (entries.length === 0) {
-      html += '<div class="home-lb-empty">尚無紀錄</div>';
-    } else {
-      entries.forEach(function(e, i) {
-        var rank = i < 3 ? medals[i] : (i + 1);
-        var isMe = e.playerName === playerName;
-        html += '<div class="home-lb-row' + (isMe ? ' is-me' : '') + '">' +
-          '<span class="home-lb-rank">' + rank + '</span>' +
-          '<span class="home-lb-name">' + e.playerName + '</span>' +
-          '<span class="home-lb-score">' + e.score + ' 分</span>' +
-        '</div>';
-      });
-    }
-    html += '</div>';
-    return html;
-  }
-
-  var html = '<div class="home-lb-columns">' +
-    buildColumn('⏱ 3 分鐘', entries3) +
-    buildColumn('⏱ 5 分鐘', entries5) +
+  var html = '';
+  entries.forEach(function(e, i) {
+    var rank = i < 3 ? medals[i] : (i + 1);
+    var isMe = e.playerName === playerName;
+    html += '<div class="home-lb-row' + (isMe ? ' is-me' : '') + '">' +
+      '<span class="home-lb-rank">' + rank + '</span>' +
+      '<span class="home-lb-name">' + e.playerName + '</span>' +
+      '<span class="home-lb-score">' + e.score + ' 分</span>' +
     '</div>';
-
-  container.innerHTML = html;
-  container.style.display = 'block';
+  });
+  listEl.innerHTML = html;
 }
 
 // ===== Mastered Words Page =====
