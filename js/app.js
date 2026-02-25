@@ -118,7 +118,7 @@ function updateHomeDeckInfo() {
   iconEl.textContent = icons[currentDeck.id] || '📄';
   nameEl.textContent = currentDeck.name;
   infoBar.style.borderStyle = 'solid';
-  infoBar.style.borderColor = 'var(--accent)';
+  infoBar.style.borderColor = 'var(--primary)';
 
   // Calculate mastery
   var playerName = document.getElementById('player-name').value.trim();
@@ -242,7 +242,7 @@ function renderCustomDeckList() {
     return;
   }
   listEl.innerHTML = customs.map(function(deck) {
-    return '<div style="display:flex; align-items:center; padding:10px; background:var(--bg-glass); border-radius:8px; margin-bottom:8px; cursor:pointer" onclick="selectDeck(\'' + deck.id + '\')">' +
+    return '<div style="display:flex; align-items:center; padding:10px; background:var(--bg-secondary); border:2px solid var(--border-color); border-radius:10px; margin-bottom:8px; cursor:pointer" onclick="selectDeck(\'' + deck.id + '\')">' +
       '<span style="flex:1; font-weight:600">' + deck.name + ' <span style="font-weight:normal; color:var(--text-muted)">(' + deck.words.length + ' 字)</span></span>' +
       '<button class="btn btn-xs" onclick="event.stopPropagation(); confirmDeleteDeck(\'' + deck.id + '\')" style="color:var(--danger)">刪除</button>' +
     '</div>';

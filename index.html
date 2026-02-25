@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>國中小英文單字王</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,10 +21,10 @@
         <label class="input-label" for="player-name">你的名字</label>
         <input type="text" id="player-name" class="game-input" placeholder="輸入玩家名稱..." maxlength="20">
 
-        <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()" style="margin-top:12px; padding:12px; background:var(--bg-glass); border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; gap:10px; border:1px dashed var(--border-glass)">
+        <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()" style="margin-top:12px; padding:12px; background:var(--bg-secondary); border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; gap:10px; border:3px dashed var(--border-color)">
           <span id="home-deck-icon" style="font-size:1.5rem">📚</span>
           <div style="flex:1">
-            <div id="home-deck-name" style="font-weight:600">尚未選擇題庫</div>
+            <div id="home-deck-name" style="font-weight:700">尚未選擇題庫</div>
             <div id="home-deck-stats" style="font-size:0.8rem; color:var(--text-muted)">點擊選擇題庫</div>
           </div>
           <span style="color:var(--text-muted)">▶</span>
