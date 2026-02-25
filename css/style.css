@@ -780,14 +780,25 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 .done-badge { color: var(--success); font-weight: 700; font-size: var(--font-size-sm); }
 
 /* ===== Game Page ===== */
-.game-header { margin-bottom: 20px; margin-top: 0; }
+.game-header { margin-bottom: 12px; }
+.game-header-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.game-header-info {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+}
 .game-timer {
-  text-align: center;
-  font-size: 3rem;
+  font-size: 2.4rem;
   font-weight: 800;
   font-family: 'Space Grotesk', 'DM Sans', sans-serif;
   color: var(--primary);
-  margin: 0 0 4px;
+  line-height: 1;
 }
 .game-timer.urgent {
   color: var(--danger);
@@ -797,15 +808,8 @@ select option { background: var(--bg-card); color: var(--text-primary); }
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
 }
-.game-progress {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin: 12px 0 8px;
-}
-#game-progress-text { font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-lg); }
-#game-remaining { font-size: var(--font-size-xl); font-weight: 800; color: var(--primary); }
+.game-progress-text { font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-base); }
+.game-remaining { font-size: var(--font-size-lg); font-weight: 800; color: var(--primary); }
 
 .game-card {
   padding: 32px 24px;

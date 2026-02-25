@@ -127,11 +127,14 @@
     <!-- ===== Game Page (shared by Practice & Challenge) ===== -->
     <section id="page-practice-game" class="page">
       <div class="game-header">
-        <button class="btn-icon-back" onclick="exitGame()">✕</button>
-        <div id="game-timer" class="game-timer" style="display:none"></div>
-        <div class="game-progress">
-          <span id="game-progress-text"></span>
-          <span id="game-remaining"></span>
+        <div class="game-header-top">
+          <button class="btn-icon-back" onclick="exitGame()">✕</button>
+          <div class="game-header-info">
+            <div id="game-timer" class="game-timer" style="display:none"></div>
+            <span id="game-progress-text" class="game-progress-text"></span>
+            <span id="game-remaining" class="game-remaining"></span>
+          </div>
+          <div style="width:40px"></div>
         </div>
         <div class="progress-bar"><div id="game-progress-bar" class="progress-fill"></div></div>
       </div>
