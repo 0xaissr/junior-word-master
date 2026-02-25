@@ -784,22 +784,25 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 .game-header-top {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
-}
-.game-header-info {
-  flex: 1;
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 12px;
 }
 .game-timer {
+  flex: 1;
+  text-align: center;
   font-size: 2.4rem;
   font-weight: 800;
   font-family: 'Space Grotesk', 'DM Sans', sans-serif;
   color: var(--primary);
   line-height: 1;
 }
+.game-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0 8px;
+}
+#game-progress-text { font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-lg); }
+#game-remaining { font-size: var(--font-size-xl); font-weight: 800; color: var(--primary); }
 .game-timer.urgent {
   color: var(--danger);
   animation: timerPulse 1s ease infinite;
@@ -808,8 +811,6 @@ select option { background: var(--bg-card); color: var(--text-primary); }
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
 }
-.game-progress-text { font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-base); }
-.game-remaining { font-size: var(--font-size-lg); font-weight: 800; color: var(--primary); }
 
 .game-card {
   padding: 32px 24px;
