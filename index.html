@@ -80,8 +80,10 @@
 
     <!-- ===== Practice Word Selection Page ===== -->
     <section id="page-practice-select" class="page">
-      <button class="btn btn-back" onclick="showPage('page-deck-select')">← 回題庫選擇</button>
-      <h2 class="page-title">選擇練習單字</h2>
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="showPage('page-deck-select')">←</button>
+        <h2 class="page-header-title">選擇練習單字</h2>
+      </div>
       <div class="select-search">
         <input type="text" id="word-search" class="game-input" placeholder="搜尋單字..." oninput="filterWords()">
       </div>
