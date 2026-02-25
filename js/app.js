@@ -810,7 +810,7 @@ function handleAnswer(word, correct) {
   var playerName = document.getElementById('player-name').value.trim();
   updatePlayerStats(playerName, word.en, correct);
 
-  if (gameState.mode === 'practice' && correct) {
+  if (correct) {
     var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
     var actualType = gameState.quizType;
     if (actualType === 'mixed' && gameState.mixedQuestions) {
