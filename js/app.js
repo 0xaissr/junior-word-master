@@ -142,29 +142,111 @@ function getDeckIcons() {
   return { yilan400: '🏫', basic300: '📚', moe1200: '🎓', hualien300: '🌊', hualien600: '🌊', geptkids: '🏆', taichung300: '🏙️', jh2000: '📖', adv800: '📕' };
 }
 
+// Deck level categories
+const DECK_LEVELS = {
+  elementary: ['yilan400', 'basic300', 'moe1200', 'hualien300', 'hualien600', 'geptkids', 'taichung300'],
+  junior: ['jh2000', 'adv800']
+};
+
+let currentLevel = 'elementary';
+let pendingDeckId = null;
+
 // ===== Deck Selection =====
 function renderDeckSelect() {
-  const allDecks = getAllDecks();
-  const list = document.getElementById('deck-list');
-  const icons = getDeckIcons();
-  const builtinIds = new Set(BUILTIN_DECKS.map(function(d) { return d.id; }));
-  let html = '';
+  // Determine initial level from current deck
+  if (currentDeck) {
+    if (DECK_LEVELS.junior.includes(currentDeck.id)) {
+      currentLevel = 'junior';
+    } else if (currentDeck.id.startsWith('custom_')) {
+      currentLevel = 'custom';
+    } else {
+      currentLevel = 'elementary';
+    }
+  }
+  pendingDeckId = currentDeck ? currentDeck.id : null;
+  switchLevel(currentLevel);
+}
 
-  allDecks.forEach(function(deck) {
-    const isCustom = !builtinIds.has(deck.id);
-    const icon = icons[deck.id] || '📄';
-    html += '<div class="deck-card" onclick="selectDeck(\'' + deck.id + '\')">' +
-      '<div class="deck-icon">' + icon + '</div>' +
-      '<div class="deck-info">' +
-        '<div class="deck-name">' + deck.name + '</div>' +
-        '<div class="deck-desc">' + (deck.description || '自訂題庫') + '</div>' +
-        '<div class="deck-count">' + deck.words.length + ' 個單字</div>' +
-      '</div>' +
-      (isCustom ? '<button class="deck-delete" onclick="event.stopPropagation(); confirmDeleteDeck(\'' + deck.id + '\')" title="刪除題庫">🗑️</button>' : '') +
-    '</div>';
+function switchLevel(level) {
+  currentLevel = level;
+  // Update toggle buttons
+  document.querySelectorAll('.level-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('.level-btn[data-level="' + level + '"]').classList.add('active');
+
+  var dropdownArea = document.getElementById('deck-dropdown-area');
+  var customArea = document.getElementById('custom-upload-area');
+  var confirmBtn = document.getElementById('confirm-deck-btn');
+
+  if (level === 'custom') {
+    dropdownArea.style.display = 'none';
+    customArea.style.display = 'block';
+    renderCustomDeckList();
+    confirmBtn.style.display = 'none';
+  } else {
+    dropdownArea.style.display = 'block';
+    customArea.style.display = 'none';
+    populateDeckDropdown(level);
+  }
+}
+
+function populateDeckDropdown(level) {
+  var dropdown = document.getElementById('deck-dropdown');
+  var deckIds = DECK_LEVELS[level] || [];
+  var icons = getDeckIcons();
+  var html = '<option value="">-- 請選擇題庫 --</option>';
+
+  deckIds.forEach(function(id) {
+    var deck = BUILTIN_DECKS.find(function(d) { return d.id === id; });
+    if (deck) {
+      var icon = icons[id] || '📄';
+      var selected = pendingDeckId === id ? ' selected' : '';
+      html += '<option value="' + id + '"' + selected + '>' + icon + ' ' + deck.name + '（' + deck.words.length + ' 字）</option>';
+    }
   });
 
-  list.innerHTML = html;
+  dropdown.innerHTML = html;
+  onDeckDropdownChange();
+}
+
+function onDeckDropdownChange() {
+  var dropdown = document.getElementById('deck-dropdown');
+  var deckId = dropdown.value;
+  var detail = document.getElementById('deck-detail');
+  var confirmBtn = document.getElementById('confirm-deck-btn');
+
+  if (!deckId) {
+    detail.innerHTML = '';
+    confirmBtn.style.display = 'none';
+    pendingDeckId = null;
+    return;
+  }
+
+  pendingDeckId = deckId;
+  var deck = BUILTIN_DECKS.find(function(d) { return d.id === deckId; });
+  if (deck) {
+    detail.innerHTML = '<strong>' + deck.description + '</strong><br>共 ' + deck.words.length + ' 個單字';
+    confirmBtn.style.display = 'block';
+  }
+}
+
+function confirmDeckSelection() {
+  if (!pendingDeckId) return;
+  selectDeck(pendingDeckId);
+}
+
+function renderCustomDeckList() {
+  var customs = getCustomDecks();
+  var listEl = document.getElementById('custom-deck-list');
+  if (customs.length === 0) {
+    listEl.innerHTML = '<p style="text-align:center; color:var(--text-light)">尚無自訂題庫</p>';
+    return;
+  }
+  listEl.innerHTML = customs.map(function(deck) {
+    return '<div style="display:flex; align-items:center; padding:10px; background:var(--bg-light); border-radius:8px; margin-bottom:8px; cursor:pointer" onclick="selectDeck(\'' + deck.id + '\')">' +
+      '<span style="flex:1; font-weight:600">' + deck.name + ' <span style="font-weight:normal; color:var(--text-light)">(' + deck.words.length + ' 字)</span></span>' +
+      '<button class="btn btn-xs" onclick="event.stopPropagation(); confirmDeleteDeck(\'' + deck.id + '\')" style="color:var(--danger)">刪除</button>' +
+    '</div>';
+  }).join('');
 }
 
 function selectDeck(deckId) {

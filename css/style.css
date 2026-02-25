@@ -902,6 +902,36 @@ select:focus {
   background: rgba(231, 76, 60, 0.1);
 }
 
+/* Level Toggle */
+.level-toggle {
+  display: flex;
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  padding: 4px;
+  gap: 4px;
+}
+.level-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: calc(var(--radius) - 4px);
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.level-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(74, 144, 217, 0.3);
+}
+.level-btn:hover:not(.active) {
+  background: rgba(74, 144, 217, 0.1);
+  color: var(--primary);
+}
+
 /* CSV Upload Section */
 .csv-upload-section {
   border: 2px dashed #BDC3C7;

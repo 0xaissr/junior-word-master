@@ -38,18 +38,34 @@
     <section id="page-deck-select" class="page">
       <button class="btn btn-back" onclick="backFromDeckSelect()">← 回首頁</button>
       <h2 class="page-title">選擇題庫</h2>
-      <div id="deck-list" class="deck-list"></div>
 
-      <div class="section-divider">或上傳自訂題庫</div>
+      <div class="card">
+        <div class="level-toggle" id="level-toggle">
+          <button class="level-btn active" data-level="elementary" onclick="switchLevel('elementary')">國小</button>
+          <button class="level-btn" data-level="junior" onclick="switchLevel('junior')">國中</button>
+          <button class="level-btn" data-level="custom" onclick="switchLevel('custom')">自訂</button>
+        </div>
 
-      <div class="csv-upload-section">
-        <h3>上傳 CSV 檔案</h3>
-        <p>格式：每行一組 <code>英文,中文</code></p>
-        <input type="text" id="csv-deck-name" placeholder="題庫名稱（必填）">
-        <br>
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-file-input').click()">選擇 CSV 檔案</button>
-        <input type="file" id="csv-file-input" accept=".csv,.txt" onchange="handleCSVUpload(event)">
-        <div id="csv-preview" style="margin-top:12px"></div>
+        <div id="deck-dropdown-area" style="margin-top:16px">
+          <select id="deck-dropdown" class="game-input" onchange="onDeckDropdownChange()" style="width:100%; cursor:pointer">
+            <option value="">-- 請選擇題庫 --</option>
+          </select>
+          <div id="deck-detail" style="margin-top:12px; font-size:0.9rem; color:var(--text-light)"></div>
+        </div>
+
+        <div id="custom-upload-area" style="display:none; margin-top:16px">
+          <div id="custom-deck-list" style="margin-bottom:12px"></div>
+          <div class="section-divider">上傳新題庫</div>
+          <div style="text-align:center">
+            <input type="text" id="csv-deck-name" class="game-input" placeholder="題庫名稱（必填）" style="margin-bottom:8px">
+            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:8px">格式：每行一組 <code>英文,中文</code></p>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-file-input').click()">選擇 CSV 檔案</button>
+            <input type="file" id="csv-file-input" accept=".csv,.txt" onchange="handleCSVUpload(event)" style="display:none">
+            <div id="csv-preview" style="margin-top:12px"></div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="confirm-deck-btn" style="width:100%; margin-top:16px; display:none" onclick="confirmDeckSelection()">確認選擇</button>
       </div>
     </section>
 
