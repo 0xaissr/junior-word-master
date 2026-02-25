@@ -6,7 +6,7 @@
   <title>國中小英文單字王</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=LXGW+WenKai+TC:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,12 +20,20 @@
     <!-- ===== Home Page ===== -->
     <section id="page-home" class="page active">
       <div class="title-area">
-        <h1 class="app-title" style="font-size:2.5rem">國中小英文單字王</h1>
-        <p class="app-subtitle">挑戰你的單字力！</p>
+        <h1 class="app-title">國中小英文單字王</h1>
       </div>
       <div class="card home-card">
-        <label class="input-label" for="player-name" style="text-align:center">你的名字</label>
-        <input type="text" id="player-name" class="game-input" placeholder="輸入玩家名稱..." maxlength="20" style="text-align:center">
+        <div id="player-name-display" class="player-name-display" style="display:none">
+          <span id="player-name-text" style="font-size:var(--font-size-lg); font-weight:800; color:var(--text-primary)"></span>
+          <button class="btn-edit-name" onclick="editPlayerName()" title="編輯名字">✎</button>
+        </div>
+        <div id="player-name-edit">
+          <label class="input-label" for="player-name" style="text-align:center">你的名字</label>
+          <div style="display:flex; gap:8px; align-items:center">
+            <input type="text" id="player-name" class="game-input" placeholder="輸入玩家名稱..." maxlength="20" style="text-align:center; flex:1">
+            <button class="btn-confirm-name" id="btn-confirm-name" onclick="confirmPlayerName()" style="display:none" title="確認">✓</button>
+          </div>
+        </div>
 
         <div class="deck-info-bar" id="home-deck-info" onclick="goToDeckSelect()">
           <span id="home-deck-icon" style="font-size:2rem">📚</span>
@@ -38,9 +46,11 @@
 
         <div style="display:flex; gap:10px; margin-top:16px">
           <button class="btn btn-primary" style="flex:1" onclick="startPractice()">練習模式</button>
-          <button class="btn btn-accent" style="flex:1" onclick="startChallenge()">挑戰模式</button>
+          <button class="btn btn-accent" style="flex:1" onclick="startChallenge()">計時挑戰</button>
         </div>
       </div>
+      <div class="stats-bar" id="home-stats"></div>
+      <button class="btn btn-secondary" style="width:100%; margin-top:10px" onclick="goToMasteredWords()">已記單字</button>
     </section>
 
     <!-- ===== Deck Selection Page ===== -->
@@ -83,7 +93,7 @@
     <!-- ===== Practice Word Selection Page ===== -->
     <section id="page-practice-select" class="page">
       <div class="page-header">
-        <button class="btn-icon-back" onclick="showPage('page-deck-select')">←</button>
+        <button class="btn-icon-back" onclick="showPage('page-home')">←</button>
         <h2 class="page-header-title">選擇練習單字</h2>
       </div>
       <div class="select-search">
@@ -116,9 +126,10 @@
     <section id="page-practice-game" class="page">
       <div class="game-header">
         <button class="btn-icon-back" onclick="exitGame()">✕</button>
+        <div id="game-timer" class="game-timer" style="display:none"></div>
         <div class="game-progress">
           <span id="game-progress-text"></span>
-          <span id="game-remaining" class="badge"></span>
+          <span id="game-remaining"></span>
         </div>
         <div class="progress-bar"><div id="game-progress-bar" class="progress-fill"></div></div>
       </div>
@@ -133,30 +144,60 @@
     <!-- ===== Challenge Setup Page ===== -->
     <section id="page-challenge-setup" class="page">
       <div class="page-header">
-        <button class="btn-icon-back" onclick="showPage('page-deck-select')">←</button>
-        <h2 class="page-header-title">挑戰模式設定</h2>
+        <button class="btn-icon-back" onclick="showPage('page-home')">←</button>
+        <h2 class="page-header-title">計時挑戰設定</h2>
       </div>
       <div class="card">
         <h3 style="margin-bottom:12px">題型（可多選）</h3>
         <div id="challenge-type-options" class="option-group">
           <button class="btn-option active" data-type="zh2en" onclick="toggleChallengeType('zh2en')">✏️ 中翻英</button>
           <button class="btn-option" data-type="en2zh" onclick="toggleChallengeType('en2zh')">📝 英翻中</button>
-          <button class="btn-option" data-type="choice" onclick="toggleChallengeType('choice')">🔤 選擇題</button>
         </div>
-        <h3 style="margin:16px 0 12px">題數</h3>
-        <div id="challenge-count-options" class="option-group">
-          <button class="btn-option" data-count="10" onclick="selectChallengeCount(10)">10 題</button>
-          <button class="btn-option active" data-count="20" onclick="selectChallengeCount(20)">20 題</button>
-          <button class="btn-option" data-count="30" onclick="selectChallengeCount(30)">30 題</button>
+        <h3 style="margin:16px 0 12px">時間</h3>
+        <div id="challenge-time-options" class="option-group">
+          <button class="btn-option active" data-time="180" onclick="selectChallengeTime(180)">3 分鐘</button>
+          <button class="btn-option" data-time="300" onclick="selectChallengeTime(300)">5 分鐘</button>
         </div>
-        <button class="btn btn-accent" style="width:100%; margin-top:20px" onclick="startChallengeGame()">開始挑戰！</button>
+        <p style="margin-top:12px; font-size:var(--font-size-sm); color:var(--text-muted); text-align:center">每答對一題得 10 分，限時內盡量拿高分！</p>
+        <button class="btn btn-accent" style="width:100%; margin-top:16px" onclick="startChallengeGame()">開始挑戰！</button>
+      </div>
+    </section>
+
+    <!-- ===== Leaderboard Page ===== -->
+    <section id="page-leaderboard" class="page">
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="showPage('page-home')">←</button>
+        <h2 class="page-header-title">排行榜</h2>
+      </div>
+      <div class="card">
+        <select id="lb-deck-select" class="game-input" onchange="renderLeaderboardPage()" style="width:100%; cursor:pointer"></select>
+        <div class="lb-time-toggle" style="margin-top:12px">
+          <button class="btn-option active" data-lb-time="180" onclick="selectLbTime(180)">3 分鐘</button>
+          <button class="btn-option" data-lb-time="300" onclick="selectLbTime(300)">5 分鐘</button>
+        </div>
+        <table id="lb-table" class="leaderboard" style="margin-top:16px"></table>
+        <p id="lb-empty" style="text-align:center; color:var(--text-muted); margin-top:16px; display:none">尚無紀錄</p>
+      </div>
+    </section>
+
+    <!-- ===== Mastered Words Page ===== -->
+    <section id="page-mastered" class="page">
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="showPage('page-home')">←</button>
+        <h2 class="page-header-title">已記單字</h2>
+      </div>
+      <div class="card">
+        <div id="mastered-summary" style="text-align:center; margin-bottom:16px; color:var(--text-muted); font-size:var(--font-size-sm)"></div>
+        <input type="text" id="mastered-search" class="game-input" placeholder="搜尋單字..." oninput="filterMasteredWords()" style="margin-bottom:12px">
+        <div id="mastered-list" class="select-list"></div>
+        <p id="mastered-empty" style="text-align:center; color:var(--text-muted); margin-top:16px; display:none">尚無已記單字</p>
       </div>
     </section>
 
     <!-- ===== Challenge Result Page ===== -->
     <section id="page-challenge-result" class="page">
       <div class="card" style="text-align:center">
-        <h2>挑戰結束！</h2>
+        <h2>時間到！</h2>
         <div class="result-score">
           <span id="result-score" class="big-score"></span>
         </div>

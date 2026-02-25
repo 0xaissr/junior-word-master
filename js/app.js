@@ -39,30 +39,75 @@ function randomPick(arr, n, exclude) {
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  if (pageId === 'page-home') renderHomeStats();
 }
 
 // ===== Home Page =====
 window.addEventListener('DOMContentLoaded', function() {
-  const saved = localStorage.getItem('vocabGame_playerName');
-  if (saved) document.getElementById('player-name').value = saved;
+  var saved = localStorage.getItem('vocabGame_playerName');
+  if (saved) {
+    document.getElementById('player-name').value = saved;
+    showPlayerNameDisplay(saved);
+  }
 
   // Restore remembered deck
-  const savedDeckId = localStorage.getItem('vocabGame_currentDeckId');
+  var savedDeckId = localStorage.getItem('vocabGame_currentDeckId');
   if (savedDeckId) {
-    const allDecks = getAllDecks();
-    const deck = allDecks.find(function(d) { return d.id === savedDeckId; });
+    var allDecks = getAllDecks();
+    var deck = allDecks.find(function(d) { return d.id === savedDeckId; });
     if (deck) {
       currentDeck = deck;
       currentWords = deck.words;
       updateHomeDeckInfo();
     }
   }
+  renderHomeStats();
+
+  var nameInput = document.getElementById('player-name');
+  nameInput.addEventListener('input', function() {
+    var val = nameInput.value.trim();
+    document.getElementById('btn-confirm-name').style.display = val ? 'block' : 'none';
+    renderHomeStats();
+  });
+  nameInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); confirmPlayerName(); }
+  });
 });
 
+function showPlayerNameDisplay(name) {
+  document.getElementById('player-name-text').textContent = '挑戰者：' + name;
+  document.getElementById('player-name-display').style.display = 'block';
+  document.getElementById('player-name-edit').style.display = 'none';
+}
+
+function showPlayerNameEdit() {
+  document.getElementById('player-name-display').style.display = 'none';
+  document.getElementById('player-name-edit').style.display = 'block';
+  var input = document.getElementById('player-name');
+  var label = document.querySelector('#player-name-edit .input-label');
+  if (label) label.style.display = input.value.trim() ? 'none' : '';
+  input.focus();
+  document.getElementById('btn-confirm-name').style.display = input.value.trim() ? 'block' : 'none';
+}
+
+function editPlayerName() {
+  showPlayerNameEdit();
+}
+
+function confirmPlayerName() {
+  var name = document.getElementById('player-name').value.trim();
+  if (!name) return;
+  localStorage.setItem('vocabGame_playerName', name);
+  showPlayerNameDisplay(name);
+  renderHomeStats();
+  updateHomeDeckInfo();
+}
+
 function getPlayerName() {
-  const name = document.getElementById('player-name').value.trim();
+  var name = document.getElementById('player-name').value.trim();
   if (!name) {
     alert('請先輸入你的名字！');
+    showPlayerNameEdit();
     return null;
   }
   localStorage.setItem('vocabGame_playerName', name);
@@ -143,7 +188,7 @@ function getDeckIcons() {
 
 // Deck level categories
 const DECK_LEVELS = {
-  elementary: ['yilan400', 'basic300', 'moe1200', 'hualien300', 'hualien600', 'geptkids', 'taichung300'],
+  elementary: ['geptkids', 'taichung300', 'hualien300', 'hualien600', 'yilan400', 'basic300', 'moe1200'],
   junior: ['jh2000', 'adv800']
 };
 
@@ -472,17 +517,20 @@ function renderPracticeType() {
     var total = selectedWords.length;
     var done = total - remaining;
     var allDone = remaining === 0;
+    var pct = total ? Math.round(done / total * 100) : 0;
     return '<div class="type-card ' + (allDone ? 'completed' : '') + '" data-type="' + t.key + '" onclick="togglePracticeType(\'' + t.key + '\')">' +
-      '<div class="type-check" style="position:absolute;top:8px;right:8px;font-size:1.2rem;display:none">✅</div>' +
-      '<div class="type-icon">' + t.icon + '</div>' +
-      '<h3>' + t.label + '</h3>' +
-      '<p>' + t.desc + '</p>' +
-      '<div class="type-progress">' +
-        (allDone
-          ? '<span class="done-badge">全部完成！</span>'
-          : '<span class="remaining">還剩 <strong>' + remaining + '</strong> 個單字</span>') +
-        '<div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:' + (total ? (done/total*100) : 0) + '%"></div></div>' +
-      '</div></div>';
+      '<div class="type-card-row">' +
+        '<input type="checkbox" class="type-check" tabindex="-1"' + (allDone ? ' disabled' : '') + '>' +
+        '<h3>' + t.label + '</h3>' +
+        '<span class="type-card-stat">' +
+          (allDone
+            ? '<span class="done-badge">完成</span>'
+            : '<span class="remaining">剩 ' + remaining + ' 字</span>') +
+          '<span class="type-card-pct">' + pct + '%</span>' +
+        '</span>' +
+      '</div>' +
+      '<div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+    '</div>';
   }).join('');
 
   // Add start button
@@ -498,11 +546,11 @@ function togglePracticeType(typeKey) {
   if (selectedPracticeTypes.has(typeKey)) {
     selectedPracticeTypes.delete(typeKey);
     card.classList.remove('selected');
-    card.querySelector('.type-check').style.display = 'none';
+    card.querySelector('.type-check').checked = false;
   } else {
     selectedPracticeTypes.add(typeKey);
     card.classList.add('selected');
-    card.querySelector('.type-check').style.display = 'block';
+    card.querySelector('.type-check').checked = true;
   }
 
   var btn = document.getElementById('start-practice-btn');
@@ -551,6 +599,7 @@ function startMultiPractice() {
       total: allQuestions.length,
       answers: []
     };
+    incrementPlayCount(document.getElementById('player-name').value.trim());
     renderGameQuestion();
     showPage('page-practice-game');
   }
@@ -612,6 +661,7 @@ function startPracticeGame(quizType) {
   var questions = generateQuestions(selectedWords, quizType, 'practice');
   if (questions.length === 0) {
     alert('這個題型的選中單字都已經答對了！');
+
     return;
   }
   gameState = {
@@ -623,6 +673,7 @@ function startPracticeGame(quizType) {
     total: questions.length,
     answers: []
   };
+  incrementPlayCount(document.getElementById('player-name').value.trim());
   renderGameQuestion();
   showPage('page-practice-game');
 }
@@ -640,12 +691,11 @@ function renderGameQuestion() {
   var currentIndex = gameState.currentIndex;
   var mode = gameState.mode;
 
-  if (currentIndex >= questions.length) {
-    if (mode === 'challenge') {
-      renderChallengeResult();
-      showPage('page-challenge-result');
-      return;
-    }
+  if (mode === 'challenge' && currentIndex >= questions.length) {
+    refillChallengeQuestions();
+    questions = gameState.questions;
+  }
+  if (mode === 'practice' && currentIndex >= questions.length) {
     showPracticeComplete();
     return;
   }
@@ -658,27 +708,35 @@ function renderGameQuestion() {
   feedbackEl.innerHTML = '';
   actionsEl.innerHTML = '';
 
-  document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
-  var remainText = mode === 'practice' ? '還剩 ' + (questions.length - currentIndex) + ' 個需練習' : '得分: ' + gameState.score;
-  document.getElementById('game-remaining').textContent = remainText;
-  document.getElementById('game-progress-bar').style.width = (currentIndex / questions.length * 100) + '%';
+  if (mode === 'challenge') {
+    document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' 題';
+    document.getElementById('game-remaining').textContent = (gameState.score * 10) + ' 分';
+    document.getElementById('game-progress-bar').style.width = (challengeTimeLeft / (gameState.timeLimit || 180) * 100) + '%';
+  } else {
+    document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
+    document.getElementById('game-remaining').textContent = '還剩 ' + (questions.length - currentIndex) + ' 個需練習';
+    document.getElementById('game-progress-bar').style.width = (currentIndex / questions.length * 100) + '%';
+  }
 
   if (quizType === 'zh2en') {
-    questionEl.innerHTML = '<div class="question-prompt">請寫出英文</div><div class="question-word">' + word.zh + '</div>';
-    answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" placeholder="輸入英文..." autofocus>' +
-      '<button class="btn btn-primary" onclick="submitAnswer()">確定</button>';
+    questionEl.innerHTML = '<div class="question-word">' + word.zh + '</div>';
+    answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" autofocus>' +
+      '<button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">確定</button>';
     setTimeout(function() { var inp = document.getElementById('user-input'); if (inp) inp.focus(); }, 100);
-    document.getElementById('user-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') submitAnswer(); });
+    document.getElementById('user-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
   } else if (quizType === 'en2zh') {
-    questionEl.innerHTML = '<div class="question-prompt">請寫出中文意思</div><div class="question-word">' + word.en + '</div>';
-    answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" placeholder="輸入中文..." autofocus>' +
-      '<button class="btn btn-primary" onclick="submitAnswer()">確定</button>';
+    questionEl.innerHTML = '<div class="question-word">' + word.en + '</div>';
+    answerEl.innerHTML = '<input type="text" id="user-input" class="game-input" autofocus>' +
+      '<button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">確定</button>';
     setTimeout(function() { var inp = document.getElementById('user-input'); if (inp) inp.focus(); }, 100);
-    document.getElementById('user-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') submitAnswer(); });
+    document.getElementById('user-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
   } else {
     var showEn = Math.random() > 0.5;
-    questionEl.innerHTML = '<div class="question-prompt">' + (showEn ? '這個字的中文是？' : '這個字的英文是？') + '</div>' +
-      '<div class="question-word">' + (showEn ? word.en : word.zh) + '</div>';
+    questionEl.innerHTML = '<div class="question-word">' + (showEn ? word.en : word.zh) + '</div>';
     var options = generateChoiceOptions(word, currentWords, showEn);
     answerEl.innerHTML = options.map(function(opt) {
       return '<button class="btn-choice" data-value="' + opt.value + '" data-correct="' + opt.correct + '" onclick="submitChoice(' + opt.value + ')">' + opt.label + '</button>';
@@ -688,10 +746,12 @@ function renderGameQuestion() {
 
 async function submitAnswer() {
   var inputEl = document.getElementById('user-input');
-  if (!inputEl) return;
+  if (!inputEl || inputEl.disabled) return;
   var input = inputEl.value;
   if (!input.trim()) return;
   inputEl.disabled = true;
+  inputEl.blur();
+  _lastSubmitTime = Date.now();
 
   var word = gameState.questions[gameState.currentIndex];
   var correct = false;
@@ -708,6 +768,7 @@ async function submitAnswer() {
     correct = await checkSemanticMatch(word.zh, input);
     correctAnswer = word.zh;
   }
+  if (!correct) correctAnswer = word.en + ' = ' + word.zh;
 
   showFeedback(correct, correctAnswer);
   handleAnswer(word, correct);
@@ -744,8 +805,11 @@ function handleAnswer(word, correct) {
   gameState.answers.push({ word: word, correct: correct });
   if (correct) gameState.score++;
 
+  // Update player stats
+  var playerName = document.getElementById('player-name').value.trim();
+  updatePlayerStats(playerName, word.en, correct);
+
   if (gameState.mode === 'practice' && correct) {
-    var playerName = document.getElementById('player-name').value.trim();
     var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
     var actualType = gameState.quizType;
     if (actualType === 'mixed' && gameState.mixedQuestions) {
@@ -755,14 +819,16 @@ function handleAnswer(word, correct) {
     localStorage.setItem('vocabGame_practice_' + playerName + '_' + currentDeck.id, JSON.stringify(progress));
   }
 
-  var actionsEl = document.getElementById('game-actions');
-  if (correct && gameState.mode === 'practice') {
-    setTimeout(function() {
-      gameState.currentIndex++;
-      renderGameQuestion();
-    }, 1000);
+  // Convert submit button to next button (for text input questions)
+  var submitBtn = document.getElementById('btn-submit');
+  if (submitBtn) {
+    submitBtn.id = 'btn-next';
+    submitBtn.textContent = '下一題 →';
+    submitBtn.setAttribute('onclick', 'nextQuestion()');
   } else {
-    actionsEl.innerHTML = '<button class="btn btn-primary" onclick="nextQuestion()">下一題 →</button>';
+    // For choice questions, add next button in actions area
+    var actionsEl = document.getElementById('game-actions');
+    actionsEl.innerHTML = '<button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">下一題 →</button>';
   }
 }
 
@@ -773,6 +839,20 @@ function nextQuestion() {
 
 function exitGame() {
   if (confirm('確定要離開嗎？')) {
+    if (gameState.mode === 'challenge') {
+      stopChallengeTimer();
+      if (gameState.currentIndex > 0) {
+        var playerName = document.getElementById('player-name').value.trim();
+        saveScore({
+          playerName: playerName,
+          score: gameState.score * 10,
+          total: gameState.currentIndex,
+          deckId: currentDeck.id,
+          timeLimit: gameState.timeLimit || 180,
+          timestamp: Date.now()
+        });
+      }
+    }
     if (gameState.mode === 'practice') {
       renderPracticeType();
       showPage('page-practice-type');
@@ -797,13 +877,16 @@ function showPracticeComplete() {
     '<button class="btn btn-secondary" onclick="showPage(\'page-home\')">回首頁</button>';
 }
 
-// ===== Challenge Mode =====
+// ===== Challenge Mode (Timed) =====
+var challengeTimer = null;
+var challengeTimeLeft = 0;
+
 function renderChallengeSetup() {
-  challengeConfig = { types: new Set(['zh2en']), count: 20 };
+  challengeConfig = { types: new Set(['zh2en']), timeLimit: 180 };
   document.querySelectorAll('#challenge-type-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
   document.querySelector('#challenge-type-options [data-type="zh2en"]').classList.add('active');
-  document.querySelectorAll('#challenge-count-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelector('#challenge-count-options [data-count="20"]').classList.add('active');
+  document.querySelectorAll('#challenge-time-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('#challenge-time-options [data-time="180"]').classList.add('active');
 }
 
 function toggleChallengeType(type) {
@@ -814,107 +897,424 @@ function toggleChallengeType(type) {
       challengeConfig.types.delete(type);
       btn.classList.remove('active');
     }
-    // Don't allow deselecting last type
   } else {
     challengeConfig.types.add(type);
     btn.classList.add('active');
   }
 }
 
-function selectChallengeCount(count) {
-  challengeConfig.count = count;
-  document.querySelectorAll('#challenge-count-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelector('#challenge-count-options [data-count="' + count + '"]').classList.add('active');
+function selectChallengeTime(seconds) {
+  challengeConfig.timeLimit = seconds;
+  document.querySelectorAll('#challenge-time-options .btn-option').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('#challenge-time-options [data-time="' + seconds + '"]').classList.add('active');
+}
+
+function generateChallengeQuestions(types) {
+  // Generate a large pool of questions (shuffle all words, assign random types)
+  var pool = shuffle([...currentWords]);
+  // Double pool to avoid running out quickly
+  pool = pool.concat(shuffle([...currentWords]));
+  if (types.length === 1) {
+    return { quizType: types[0], questions: pool, mixedQuestions: null };
+  }
+  var mixed = pool.map(function(w) {
+    return { word: w, quizType: types[Math.floor(Math.random() * types.length)] };
+  });
+  return { quizType: 'mixed', questions: pool, mixedQuestions: mixed };
 }
 
 function startChallengeGame() {
   var types = challengeConfig.types ? [...challengeConfig.types] : ['zh2en'];
-  var count = Math.min(challengeConfig.count, currentWords.length);
-  var selectedQuestions = shuffle([...currentWords]).slice(0, count);
+  var timeLimit = challengeConfig.timeLimit || 180;
+  var gen = generateChallengeQuestions(types);
 
-  if (types.length === 1) {
-    gameState = {
-      mode: 'challenge',
-      quizType: types[0],
-      questions: selectedQuestions,
-      currentIndex: 0,
-      score: 0,
-      total: count,
-      answers: []
-    };
-  } else {
-    // Mixed types: assign random type to each question
-    var mixedQuestions = selectedQuestions.map(function(w) {
-      var randomType = types[Math.floor(Math.random() * types.length)];
-      return { word: w, quizType: randomType };
-    });
-    gameState = {
-      mode: 'challenge',
-      quizType: 'mixed',
-      mixedQuestions: mixedQuestions,
-      questions: mixedQuestions.map(function(q) { return q.word; }),
-      currentIndex: 0,
-      score: 0,
-      total: count,
-      answers: []
-    };
-  }
+  gameState = {
+    mode: 'challenge',
+    quizType: gen.quizType,
+    mixedQuestions: gen.mixedQuestions,
+    questions: gen.questions,
+    currentIndex: 0,
+    score: 0,
+    total: 0,
+    answers: [],
+    timeLimit: timeLimit
+  };
+
+  incrementPlayCount(document.getElementById('player-name').value.trim());
+  startChallengeTimer(timeLimit);
   renderGameQuestion();
   showPage('page-practice-game');
 }
 
+function startChallengeTimer(seconds) {
+  stopChallengeTimer();
+  challengeTimeLeft = seconds;
+  updateTimerDisplay();
+  document.getElementById('game-timer').style.display = 'block';
+  challengeTimer = setInterval(function() {
+    challengeTimeLeft--;
+    updateTimerDisplay();
+    if (challengeTimeLeft <= 0) {
+      stopChallengeTimer();
+      endChallengeByTime();
+    }
+  }, 1000);
+}
+
+function stopChallengeTimer() {
+  if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
+  var timerEl = document.getElementById('game-timer');
+  if (timerEl) timerEl.style.display = 'none';
+}
+
+function updateTimerDisplay() {
+  var el = document.getElementById('game-timer');
+  var min = Math.floor(challengeTimeLeft / 60);
+  var sec = challengeTimeLeft % 60;
+  el.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  if (challengeTimeLeft <= 30) {
+    el.classList.add('urgent');
+  } else {
+    el.classList.remove('urgent');
+  }
+}
+
+function endChallengeByTime() {
+  gameState.total = gameState.currentIndex;
+  renderChallengeResult();
+  showPage('page-challenge-result');
+}
+
+function refillChallengeQuestions() {
+  // If running low on questions, add more
+  var types = challengeConfig.types ? [...challengeConfig.types] : ['zh2en'];
+  var extra = shuffle([...currentWords]);
+  gameState.questions = gameState.questions.concat(extra);
+  if (gameState.mixedQuestions) {
+    var mixed = extra.map(function(w) {
+      return { word: w, quizType: types[Math.floor(Math.random() * types.length)] };
+    });
+    gameState.mixedQuestions = gameState.mixedQuestions.concat(mixed);
+  }
+}
+
 // ===== Leaderboard =====
-async function saveScore(data) {
-  var board = JSON.parse(localStorage.getItem('vocabGame_leaderboard') || '[]');
-  board.push(data);
-  localStorage.setItem('vocabGame_leaderboard', JSON.stringify(board));
+// Migrate old leaderboard data
+(function migrateLeaderboard() {
+  var old = localStorage.getItem('vocabGame_leaderboard');
+  if (!old) return;
+  var entries = JSON.parse(old);
+  entries.forEach(function(e) {
+    if (!e.deckId) return;
+    var key = 'vocabGame_lb_' + e.deckId;
+    var board = JSON.parse(localStorage.getItem(key) || '[]');
+    var existing = board.findIndex(function(b) { return b.playerName === e.playerName; });
+    if (existing >= 0) {
+      if (e.score > board[existing].score) board[existing] = e;
+    } else {
+      board.push(e);
+    }
+    board.sort(function(a, b) { return b.score - a.score || a.timestamp - b.timestamp; });
+    localStorage.setItem(key, JSON.stringify(board.slice(0, 100)));
+  });
+  localStorage.removeItem('vocabGame_leaderboard');
+})();
+
+function saveScore(data) {
+  var timeKey = data.timeLimit || 180;
+  var key = 'vocabGame_lb_' + data.deckId + '_' + timeKey;
+  var board = JSON.parse(localStorage.getItem(key) || '[]');
+  // Keep only best score per player
+  var existing = board.findIndex(function(e) { return e.playerName === data.playerName; });
+  if (existing >= 0) {
+    if (data.score > board[existing].score ||
+        (data.score === board[existing].score && data.timestamp < board[existing].timestamp)) {
+      board[existing] = data;
+    }
+  } else {
+    board.push(data);
+  }
+  board.sort(function(a, b) { return b.score - a.score || a.timestamp - b.timestamp; });
+  board = board.slice(0, 100);
+  localStorage.setItem(key, JSON.stringify(board));
+  // Also save to legacy key for backward compat
+  var legacyKey = 'vocabGame_lb_' + data.deckId;
+  var legacyBoard = JSON.parse(localStorage.getItem(legacyKey) || '[]');
+  var legacyExisting = legacyBoard.findIndex(function(e) { return e.playerName === data.playerName; });
+  if (legacyExisting >= 0) {
+    if (data.score > legacyBoard[legacyExisting].score) legacyBoard[legacyExisting] = data;
+  } else {
+    legacyBoard.push(data);
+  }
+  legacyBoard.sort(function(a, b) { return b.score - a.score || a.timestamp - b.timestamp; });
+  localStorage.setItem(legacyKey, JSON.stringify(legacyBoard.slice(0, 100)));
 }
 
-async function getLeaderboard(quizType, total, deckId) {
-  var board = JSON.parse(localStorage.getItem('vocabGame_leaderboard') || '[]');
-  return board
-    .filter(function(e) { return e.quizType === quizType && e.total === total && (!deckId || e.deckId === deckId); })
-    .sort(function(a, b) { return b.score - a.score || a.timestamp - b.timestamp; })
-    .slice(0, 10);
+function getLeaderboard(deckId, timeLimit) {
+  if (timeLimit) {
+    var key = 'vocabGame_lb_' + deckId + '_' + timeLimit;
+    return JSON.parse(localStorage.getItem(key) || '[]');
+  }
+  // fallback: legacy key (all times combined)
+  var key = 'vocabGame_lb_' + deckId;
+  return JSON.parse(localStorage.getItem(key) || '[]');
 }
 
-async function renderChallengeResult() {
-  var score = gameState.score;
-  var total = gameState.total;
-  var quizType = gameState.quizType;
+function renderChallengeResult() {
+  stopChallengeTimer();
+  var correctCount = gameState.score;
+  var totalAnswered = gameState.total || gameState.currentIndex;
+  var points = correctCount * 10;
   var playerName = document.getElementById('player-name').value.trim();
-  var rate = Math.round((score / total) * 100);
+  var rate = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
 
-  document.getElementById('result-score').textContent = score + ' / ' + total;
-  document.getElementById('result-rate').textContent = '正確率 ' + rate + '%';
+  document.getElementById('result-score').textContent = points + ' 分';
+  document.getElementById('result-rate').textContent = '答對 ' + correctCount + ' / ' + totalAnswered + ' 題（正確率 ' + rate + '%）';
 
-  await saveScore({
+  var timeLimit = gameState.timeLimit || 180;
+  saveScore({
     playerName: playerName,
-    score: score,
-    total: total,
-    quizType: quizType,
+    score: points,
+    total: totalAnswered,
     deckId: currentDeck.id,
+    timeLimit: timeLimit,
     timestamp: Date.now()
   });
 
-  var entries = await getLeaderboard(quizType, total, currentDeck.id);
-  var typeLabels = { zh2en: '中翻英', en2zh: '英翻中', choice: '選擇題' };
+  var entries = getLeaderboard(currentDeck.id, timeLimit).slice(0, 10);
 
   var table = document.getElementById('leaderboard-table');
-  var tableHtml = '<caption>' + typeLabels[quizType] + ' ' + total + ' 題 Top 10</caption>' +
-    '<thead><tr><th>名次</th><th>玩家</th><th>分數</th><th>正確率</th></tr></thead><tbody>';
+  var tableHtml = '<thead><tr><th>名次</th><th>玩家</th><th>分數</th></tr></thead><tbody>';
 
-  var currentTimestamp = Date.now();
   entries.forEach(function(e, i) {
     var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-    var isMe = e.playerName === playerName && Math.abs(e.timestamp - currentTimestamp) < 5000;
+    var isMe = e.playerName === playerName;
     tableHtml += '<tr class="' + (isMe ? 'highlight' : '') + '">' +
       '<td>' + medal + '</td>' +
       '<td>' + e.playerName + '</td>' +
-      '<td>' + e.score + '/' + e.total + '</td>' +
-      '<td>' + Math.round((e.score/e.total)*100) + '%</td></tr>';
+      '<td>' + e.score + ' 分</td></tr>';
   });
 
   tableHtml += '</tbody>';
   table.innerHTML = tableHtml;
 }
+
+// ===== Leaderboard Page =====
+var lbSelectedTime = 180;
+
+function selectLbTime(time) {
+  lbSelectedTime = time;
+  document.querySelectorAll('.lb-time-toggle .btn-option').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('.lb-time-toggle [data-lb-time="' + time + '"]').classList.add('active');
+  renderLeaderboardPage();
+}
+
+function goToLeaderboard() {
+  var select = document.getElementById('lb-deck-select');
+  var allDecks = getAllDecks();
+  select.innerHTML = allDecks.map(function(d) {
+    return '<option value="' + d.id + '"' + (currentDeck && currentDeck.id === d.id ? ' selected' : '') + '>' + d.name + '</option>';
+  }).join('');
+  renderLeaderboardPage();
+  showPage('page-leaderboard');
+}
+
+function renderLeaderboardPage() {
+  var deckId = document.getElementById('lb-deck-select').value;
+  var entries = getLeaderboard(deckId, lbSelectedTime);
+  var table = document.getElementById('lb-table');
+  var emptyMsg = document.getElementById('lb-empty');
+  var playerName = document.getElementById('player-name').value.trim();
+
+  if (entries.length === 0) {
+    table.innerHTML = '';
+    table.style.display = 'none';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+
+  table.style.display = '';
+  emptyMsg.style.display = 'none';
+
+  var html = '<thead><tr><th>名次</th><th>玩家</th><th>最高分</th></tr></thead><tbody>';
+  entries.forEach(function(e, i) {
+    var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+    var isMe = e.playerName === playerName;
+    html += '<tr class="' + (isMe ? 'highlight' : '') + '">' +
+      '<td>' + medal + '</td>' +
+      '<td>' + e.playerName + '</td>' +
+      '<td>' + e.score + ' 分</td></tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ===== Player Stats =====
+function getPlayerStats(playerName) {
+  return JSON.parse(localStorage.getItem('vocabGame_stats_' + playerName) || '{"plays":0,"correct":0,"total":0,"words":{}}');
+}
+
+function updatePlayerStats(playerName, wordEn, correct) {
+  var stats = getPlayerStats(playerName);
+  stats.total++;
+  if (correct) {
+    stats.correct++;
+    stats.words[wordEn] = true;
+  }
+  localStorage.setItem('vocabGame_stats_' + playerName, JSON.stringify(stats));
+}
+
+function incrementPlayCount(playerName) {
+  var stats = getPlayerStats(playerName);
+  stats.plays++;
+  localStorage.setItem('vocabGame_stats_' + playerName, JSON.stringify(stats));
+}
+
+function renderHomeStats() {
+  var playerName = document.getElementById('player-name').value.trim();
+  var container = document.getElementById('home-stats');
+  if (!playerName) { container.innerHTML = ''; return; }
+  var stats = getPlayerStats(playerName);
+  var rate = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0;
+  var wordCount = Object.keys(stats.words).length;
+  container.innerHTML =
+    '<div class="stat-item"><div class="stat-value">' + stats.plays + '</div><div class="stat-label">遊玩次數</div></div>' +
+    '<div class="stat-item"><div class="stat-value">' + wordCount + '</div><div class="stat-label">已記單字</div></div>' +
+    '<div class="stat-item"><div class="stat-value">' + rate + '%</div><div class="stat-label">總答對率</div></div>';
+}
+
+// ===== Mastered Words Page =====
+function goToMasteredWords() {
+  var playerName = document.getElementById('player-name').value.trim();
+  if (!playerName) { alert('請先輸入你的名字！'); return; }
+  renderMasteredWords();
+  showPage('page-mastered');
+}
+
+function getMasteredWordsList() {
+  var playerName = document.getElementById('player-name').value.trim();
+  var stats = getPlayerStats(playerName);
+  var masteredKeys = Object.keys(stats.words || {});
+  if (masteredKeys.length === 0) return [];
+
+  // Look up zh translation from all decks
+  var allDecks = getAllDecks();
+  var wordMap = {};
+  allDecks.forEach(function(d) {
+    d.words.forEach(function(w) {
+      if (!wordMap[w.en.toLowerCase()]) wordMap[w.en.toLowerCase()] = w.zh;
+    });
+  });
+
+  return masteredKeys.map(function(en) {
+    return { en: en, zh: wordMap[en.toLowerCase()] || '' };
+  }).sort(function(a, b) { return a.en.localeCompare(b.en); });
+}
+
+function renderMasteredWords(filter) {
+  var words = getMasteredWordsList();
+  var list = document.getElementById('mastered-list');
+  var emptyMsg = document.getElementById('mastered-empty');
+  var summary = document.getElementById('mastered-summary');
+  document.getElementById('mastered-search').value = filter || '';
+
+  if (words.length === 0) {
+    list.innerHTML = '';
+    list.style.display = 'none';
+    emptyMsg.style.display = 'block';
+    summary.textContent = '';
+    return;
+  }
+
+  list.style.display = '';
+  emptyMsg.style.display = 'none';
+
+  var filtered = words;
+  if (filter) {
+    var f = filter.toLowerCase();
+    filtered = words.filter(function(w) {
+      return w.en.toLowerCase().includes(f) || w.zh.includes(f);
+    });
+  }
+
+  summary.textContent = '共記住 ' + words.length + ' 個單字' + (filter && filtered.length !== words.length ? '（顯示 ' + filtered.length + ' 筆）' : '');
+
+  // Group by letter
+  var groups = {};
+  filtered.forEach(function(w) {
+    var letter = w.en[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(w);
+  });
+
+  var html = '';
+  Object.keys(groups).sort().forEach(function(letter) {
+    html += '<div class="word-group">';
+    html += '<div class="group-header"><span class="group-title">' + letter + ' (' + groups[letter].length + ')</span></div>';
+    groups[letter].forEach(function(w) {
+      html += '<div class="word-item" style="cursor:default">' +
+        '<span class="word-en">' + w.en + '</span>' +
+        '<span class="word-zh">' + w.zh + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function filterMasteredWords() {
+  var filter = document.getElementById('mastered-search').value;
+  renderMasteredWords(filter);
+}
+
+// ===== Global Keyboard Controls =====
+var _lastSubmitTime = 0;
+
+document.addEventListener('keydown', function(e) {
+  var gamePage = document.getElementById('page-practice-game');
+  if (!gamePage || !gamePage.classList.contains('active')) return;
+
+  // Skip if an input is focused (let input's own handler deal with Enter)
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+
+  // Debounce: ignore Enter within 300ms of last submit
+  if (e.key === 'Enter' && Date.now() - _lastSubmitTime < 300) return;
+
+  // Enter → next question (when "下一題" button is visible)
+  if (e.key === 'Enter') {
+    var nextBtn = document.getElementById('btn-next');
+    if (nextBtn) {
+      e.preventDefault();
+      nextQuestion();
+      return;
+    }
+    // Enter to select focused choice
+    var focusedChoice = document.querySelector('.btn-choice.focused:not(:disabled)');
+    if (focusedChoice) {
+      e.preventDefault();
+      focusedChoice.click();
+      return;
+    }
+  }
+
+  // Arrow keys for choice questions
+  var choices = document.querySelectorAll('.btn-choice:not(:disabled)');
+  if (choices.length === 0) return;
+
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    var focused = document.querySelector('.btn-choice.focused');
+    var idx = -1;
+    if (focused) {
+      choices.forEach(function(btn, i) { if (btn === focused) idx = i; });
+      focused.classList.remove('focused');
+    }
+    if (e.key === 'ArrowDown') {
+      idx = (idx + 1) % choices.length;
+    } else {
+      idx = idx <= 0 ? choices.length - 1 : idx - 1;
+    }
+    choices[idx].classList.add('focused');
+    choices[idx].scrollIntoView({ block: 'nearest' });
+  }
+});
