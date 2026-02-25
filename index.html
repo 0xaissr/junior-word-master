@@ -87,8 +87,10 @@
       </div>
       <div id="letter-nav" class="select-letters"></div>
       <div class="select-actions">
-        <button class="btn btn-xs" onclick="selectAllWords()">全選</button>
-        <button class="btn btn-xs" onclick="deselectAllWords()">全不選</button>
+        <label class="check-all-label">
+          <input type="checkbox" id="check-all" onchange="toggleAllWords(this.checked)">
+          <span>全選</span>
+        </label>
         <span id="selected-count" class="badge" style="margin-left:auto"></span>
       </div>
       <div id="word-list" class="select-list"></div>

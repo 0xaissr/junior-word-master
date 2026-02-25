@@ -369,10 +369,12 @@ function renderWordList(filter) {
     if (words.length === 0) return;
     var selectedInGroup = words.filter(function(w) { return selectedWordIds.has(w.id); }).length;
     html += '<div class="word-group" id="group-' + letter + '">';
+    var allSelected = selectedInGroup === words.length;
     html += '<div class="group-header">' +
-      '<span class="group-title">— ' + letter + ' (' + selectedInGroup + '/' + words.length + ') —</span>' +
-      '<button class="btn btn-xs" onclick="toggleGroup(\'' + letter + '\', true)">全選</button>' +
-      '<button class="btn btn-xs" onclick="toggleGroup(\'' + letter + '\', false)">取消</button>' +
+      '<label class="group-check-label">' +
+        '<input type="checkbox" ' + (allSelected ? 'checked' : '') + ' onchange="toggleGroup(\'' + letter + '\', this.checked)">' +
+      '</label>' +
+      '<span class="group-title">' + letter + ' (' + selectedInGroup + '/' + words.length + ')</span>' +
     '</div>';
     words.forEach(function(w) {
       var checked = selectedWordIds.has(w.id) ? 'checked' : '';
@@ -406,15 +408,12 @@ function toggleGroup(letter, select) {
   updateSelectedCount();
 }
 
-function selectAllWords() {
-  currentWords.forEach(function(w) { selectedWordIds.add(w.id); });
-  saveSelection();
-  renderWordList(document.getElementById('word-search').value);
-  updateSelectedCount();
-}
-
-function deselectAllWords() {
-  selectedWordIds.clear();
+function toggleAllWords(checked) {
+  if (checked) {
+    currentWords.forEach(function(w) { selectedWordIds.add(w.id); });
+  } else {
+    selectedWordIds.clear();
+  }
   saveSelection();
   renderWordList(document.getElementById('word-search').value);
   updateSelectedCount();
@@ -439,6 +438,11 @@ function saveSelection() {
 
 function updateSelectedCount() {
   document.getElementById('selected-count').textContent = '已選 ' + selectedWordIds.size + ' / ' + currentWords.length + ' 個單字';
+  var checkAll = document.getElementById('check-all');
+  if (checkAll) {
+    checkAll.checked = currentWords.length > 0 && selectedWordIds.size === currentWords.length;
+    checkAll.indeterminate = selectedWordIds.size > 0 && selectedWordIds.size < currentWords.length;
+  }
 }
 
 function confirmSelection() {
