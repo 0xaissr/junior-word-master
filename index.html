@@ -7,6 +7,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=LXGW+WenKai+TC:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FF8C42',
+            danger: '#FF6B6B',
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -126,15 +139,28 @@
 
     <!-- ===== Game Page (shared by Practice & Challenge) ===== -->
     <section id="page-practice-game" class="page">
-      <div class="game-header">
-        <div class="game-row">
-          <button class="btn-icon-back" onclick="exitGame()">✕</button>
-          <div id="game-timer" class="game-timer"></div>
-          <span id="game-progress-text"></span>
-          <div style="width:40px" id="game-row-spacer"></div>
+      <div class="mb-3">
+        <!-- 挑戰模式 Header -->
+        <div id="challenge-header" class="hidden">
+          <div class="flex items-center mb-1">
+            <button class="btn-icon-back" onclick="exitGame()">✕</button>
+            <div id="game-timer" class="game-timer flex-1 text-center"></div>
+            <div class="w-10"></div>
+          </div>
+          <div class="text-center mb-2">
+            <span id="challenge-info" class="font-bold text-gray-600 text-lg"></span>
+          </div>
         </div>
-        <div id="game-row-remaining" class="game-row-remaining">
-          <span id="game-remaining"></span>
+        <!-- 練習模式 Header -->
+        <div id="practice-header" class="hidden">
+          <div class="flex items-center mb-1">
+            <button class="btn-icon-back" onclick="exitGame()">✕</button>
+            <span id="practice-progress" class="flex-1 text-center font-bold text-gray-600 text-lg"></span>
+            <div class="w-10"></div>
+          </div>
+          <div class="text-center mb-2">
+            <span id="practice-remaining" class="font-extrabold text-primary text-lg"></span>
+          </div>
         </div>
         <div class="progress-bar"><div id="game-progress-bar" class="progress-fill"></div></div>
       </div>

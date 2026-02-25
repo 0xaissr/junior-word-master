@@ -675,11 +675,8 @@ function startPracticeGame(quizType) {
     answers: []
   };
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  // Practice: row1=[✕ 題號], row2=[剩餘]
-  document.getElementById('game-timer').style.display = 'none';
-  document.getElementById('game-row-spacer').style.display = 'none';
-  document.getElementById('game-progress-text').style.display = 'block';
-  document.getElementById('game-row-remaining').style.display = 'block';
+  document.getElementById('practice-header').classList.remove('hidden');
+  document.getElementById('challenge-header').classList.add('hidden');
   renderGameQuestion();
   showPage('page-practice-game');
 }
@@ -715,11 +712,11 @@ function renderGameQuestion() {
   actionsEl.innerHTML = '';
 
   if (mode === 'challenge') {
-    document.getElementById('game-remaining').textContent = '第 ' + (currentIndex + 1) + ' 題　' + (gameState.score * 10) + ' 分';
+    document.getElementById('challenge-info').textContent = '第 ' + (currentIndex + 1) + ' 題　' + (gameState.score * 10) + ' 分';
     document.getElementById('game-progress-bar').style.width = (challengeTimeLeft / (gameState.timeLimit || 180) * 100) + '%';
   } else {
-    document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
-    document.getElementById('game-remaining').textContent = '還剩 ' + (questions.length - currentIndex) + ' 個需練習';
+    document.getElementById('practice-progress').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
+    document.getElementById('practice-remaining').textContent = '還剩 ' + (questions.length - currentIndex) + ' 個需練習';
     document.getElementById('game-progress-bar').style.width = (currentIndex / questions.length * 100) + '%';
   }
 
@@ -946,11 +943,8 @@ function startChallengeGame() {
   };
 
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  // Challenge: row1=[✕ timer spacer], row2=[題號+分數]
-  document.getElementById('game-timer').style.display = 'block';
-  document.getElementById('game-row-spacer').style.display = 'block';
-  document.getElementById('game-progress-text').style.display = 'none';
-  document.getElementById('game-row-remaining').style.display = 'block';
+  document.getElementById('challenge-header').classList.remove('hidden');
+  document.getElementById('practice-header').classList.add('hidden');
   startChallengeTimer(timeLimit);
   renderGameQuestion();
   showPage('page-practice-game');
