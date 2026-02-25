@@ -1181,6 +1181,56 @@ function renderHomeStats() {
     '<div class="stat-item"><div class="stat-value">' + stats.plays + '</div><div class="stat-label">遊玩次數</div></div>' +
     '<div class="stat-item"><div class="stat-value">' + wordCount + '</div><div class="stat-label">已記單字</div></div>' +
     '<div class="stat-item"><div class="stat-value">' + rate + '%</div><div class="stat-label">總答對率</div></div>';
+  renderHomeLeaderboard();
+}
+
+function renderHomeLeaderboard() {
+  var container = document.getElementById('home-leaderboard');
+  if (!currentDeck) { container.style.display = 'none'; return; }
+
+  var entries3 = getLeaderboard(currentDeck.id, 180).slice(0, 5);
+  var entries5 = getLeaderboard(currentDeck.id, 300).slice(0, 5);
+
+  if (entries3.length === 0 && entries5.length === 0) {
+    var legacy = getLeaderboard(currentDeck.id).slice(0, 5);
+    if (legacy.length === 0) { container.style.display = 'none'; return; }
+    entries3 = legacy;
+  }
+
+  if (entries3.length === 0 && entries5.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  var playerName = document.getElementById('player-name').value.trim();
+  var medals = ['🥇', '🥈', '🥉'];
+
+  function buildColumn(title, entries) {
+    var html = '<div class="home-lb-col"><div class="home-lb-col-title">' + title + '</div>';
+    if (entries.length === 0) {
+      html += '<div class="home-lb-empty">尚無紀錄</div>';
+    } else {
+      entries.forEach(function(e, i) {
+        var rank = i < 3 ? medals[i] : (i + 1);
+        var isMe = e.playerName === playerName;
+        html += '<div class="home-lb-row' + (isMe ? ' is-me' : '') + '">' +
+          '<span class="home-lb-rank">' + rank + '</span>' +
+          '<span class="home-lb-name">' + e.playerName + '</span>' +
+          '<span class="home-lb-score">' + e.score + ' 分</span>' +
+        '</div>';
+      });
+    }
+    html += '</div>';
+    return html;
+  }
+
+  var html = '<div class="home-lb-columns">' +
+    buildColumn('⏱ 3 分鐘', entries3) +
+    buildColumn('⏱ 5 分鐘', entries5) +
+    '</div>';
+
+  container.innerHTML = html;
+  container.style.display = 'block';
 }
 
 // ===== Mastered Words Page =====
