@@ -2,19 +2,24 @@
 
 ## 專案概要
 
-國小英語單字王 400 字互動測驗遊戲，目標部署於 Gemini Canvas。
+國小英語單字測驗遊戲，支援多題庫（內建 + 自訂 CSV 上傳），部署於 GitHub Pages。
 
-## 技術限制
+## 技術架構
 
-- **單一 HTML 檔案**：所有 CSS/JS 必須內嵌於 `index.html`，不可有外部檔案引用（CDN 除外）
+- **多檔案結構**：HTML / CSS / JS 分離
 - **Vanilla JS**：不使用框架，用原生 DOM 操作實現 SPA
-- **Gemini Canvas 相容**：最終產出必須能直接貼到 Canvas 中運行
+- **GitHub Pages**：靜態網站部署
 
 ## 檔案結構
 
 ```
-index.html              # 遊戲主體（唯一產出檔案）
+index.html              # HTML 頁面結構
+css/style.css           # 所有樣式
+js/data.js              # 內建題庫資料 + 題庫管理函式
+js/app.js               # 遊戲邏輯、頁面互動
 docs/plans/             # 設計文件
+CLAUDE.md               # 專案說明
+LOG.md                  # 開發日誌
 ```
 
 ## 架構約定
@@ -22,8 +27,13 @@ docs/plans/             # 設計文件
 ### 頁面切換
 用 `showPage(pageId)` 函式切換顯示/隱藏 `<section>` 元素，不使用 URL routing。
 
+### 題庫系統
+- 三套內建題庫：宜蘭縣400字、國小必學300字、教育部國小1000字
+- 自訂 CSV 上傳：格式 `英文,中文`，存入 localStorage
+- `getAllDecks()` 統一取得所有題庫
+
 ### 外部服務接口
-以下兩個函式預留替換接口，開發時用 localStorage 模擬：
+以下函式預留替換接口，開發時用 localStorage 模擬：
 
 ```js
 // AI 語意檢查（英翻中判定）
@@ -31,20 +41,22 @@ async function checkSemanticMatch(correctAnswer, userInput) → boolean
 
 // 排行榜操作
 async function saveScore(data) → void
-async function getLeaderboard(quizType, total) → array
+async function getLeaderboard(quizType, total, deckId) → array
 ```
 
-搬到 Gemini Canvas 時只需替換這三個函式的實作。
-
-### 資料儲存
-- 練習進度：`localStorage` key `vocabGame_practice_{playerName}`
-- 單字選擇：`localStorage` key `vocabGame_selection_{playerName}`
-- 玩家名稱：`localStorage` key `vocabGame_playerName`
-- 排行榜：開發用 `localStorage` key `vocabGame_leaderboard`
+### 資料儲存（localStorage）
+- 練習進度：`vocabGame_practice_{playerName}_{deckId}`
+- 單字選擇：`vocabGame_selection_{playerName}_{deckId}`
+- 玩家名稱：`vocabGame_playerName`
+- 排行榜：`vocabGame_leaderboard`
+- 自訂題庫：`vocabGame_customDecks`
 
 ## 單字資料
 
-400 個單字來自「宜蘭縣 114 學年度 English Easy Go 國小英語單字王題庫」PDF。
+- 宜蘭縣 400 字：來自「宜蘭縣 114 學年度 English Easy Go 國小英語單字王題庫」
+- 國小必學 300 字：來自克林頓美語教學團隊國小必學 300 單字表
+- 教育部國小 1000 字：來自教育部國小 1000 個英語單字
+
 資料格式：`{ id: number, en: string, zh: string }`
 
 ## 視覺風格
