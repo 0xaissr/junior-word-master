@@ -111,14 +111,13 @@ function updateHomeDeckInfo() {
     nameEl.textContent = '尚未選擇題庫';
     statsEl.textContent = '點擊選擇題庫';
     iconEl.textContent = '📚';
-    infoBar.style.borderStyle = 'dashed';
+    infoBar.classList.remove('deck-selected');
     return;
   }
 
   iconEl.textContent = icons[currentDeck.id] || '📄';
   nameEl.textContent = currentDeck.name;
-  infoBar.style.borderStyle = 'solid';
-  infoBar.style.borderColor = 'var(--primary)';
+  infoBar.classList.add('deck-selected');
 
   // Calculate mastery
   var playerName = document.getElementById('player-name').value.trim();
