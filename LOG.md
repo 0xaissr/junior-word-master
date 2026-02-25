@@ -2,6 +2,7 @@
 
 ## 2026-02-25
 
+- [165f6d8] 引入 Tailwind CSS（CDN），重寫遊戲 header 為練習/挑戰兩個獨立區塊，用 hidden class 切換，徹底解決排版問題
 - [65c6c1f] 修正挑戰模式題號與計時器擠在同一排的問題，改為計時器第一排、題號+分數第二排
 - [e47d18f] 練習模式隱藏計時器，題號第一排、剩餘數第二排；挑戰模式題號+分數合併顯示於計時器下方
 - [79ab427] 修正計時器被 stopChallengeTimer 隱藏的問題；用 visibility:hidden 取代 display:none 讓題號正確置中
