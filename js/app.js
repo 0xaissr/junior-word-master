@@ -50,16 +50,14 @@ window.addEventListener('DOMContentLoaded', function() {
     showPlayerNameDisplay(saved);
   }
 
-  // Restore remembered deck
-  var savedDeckId = localStorage.getItem('vocabGame_currentDeckId');
-  if (savedDeckId) {
-    var allDecks = getAllDecks();
-    var deck = allDecks.find(function(d) { return d.id === savedDeckId; });
-    if (deck) {
-      currentDeck = deck;
-      currentWords = deck.words;
-      updateHomeDeckInfo();
-    }
+  // Restore remembered deck (default to geptkids)
+  var savedDeckId = localStorage.getItem('vocabGame_currentDeckId') || 'geptkids';
+  var allDecks = getAllDecks();
+  var deck = allDecks.find(function(d) { return d.id === savedDeckId; });
+  if (deck) {
+    currentDeck = deck;
+    currentWords = deck.words;
+    updateHomeDeckInfo();
   }
   renderHomeStats();
 
@@ -166,10 +164,10 @@ function updateHomeDeckInfo() {
   infoBar.classList.add('deck-selected');
 
   // Calculate mastery
+  var totalWords = currentDeck.words.length;
   var playerName = document.getElementById('player-name').value.trim();
   if (playerName) {
     var progress = JSON.parse(localStorage.getItem('vocabGame_practice_' + playerName + '_' + currentDeck.id) || '{}');
-    var totalWords = currentDeck.words.length;
     // Count unique words mastered (word mastered = answered correctly in at least one quiz type)
     var masteredWords = new Set();
     Object.keys(progress).forEach(function(key) {
