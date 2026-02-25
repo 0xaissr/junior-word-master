@@ -652,7 +652,7 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 }
 
 .select-list {
-  max-height: 55vh;
+  max-height: 40vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   border: var(--border-width) solid var(--border-color);
