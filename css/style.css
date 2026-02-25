@@ -780,14 +780,14 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 .done-badge { color: var(--success); font-weight: 700; font-size: var(--font-size-sm); }
 
 /* ===== Game Page ===== */
-.game-header { margin-bottom: 20px; }
+.game-header { margin-bottom: 20px; margin-top: 0; }
 .game-timer {
   text-align: center;
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 800;
   font-family: 'Space Grotesk', 'DM Sans', sans-serif;
   color: var(--primary);
-  margin: 8px 0 4px;
+  margin: 0 0 4px;
 }
 .game-timer.urgent {
   color: var(--danger);
