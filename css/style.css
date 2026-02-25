@@ -784,7 +784,7 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 .game-row {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .game-timer {
   flex: 1;
@@ -795,8 +795,8 @@ select option { background: var(--bg-card); color: var(--text-primary); }
   color: var(--primary);
   line-height: 1;
 }
-.game-exit-practice { /* hide in challenge mode, show in practice */ }
 #game-progress-text { flex: 1; text-align: center; font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-lg); }
+.game-row-remaining { text-align: center; margin-bottom: 8px; }
 #game-remaining { font-weight: 800; color: var(--primary); font-size: var(--font-size-lg); }
 .game-timer.urgent {
   color: var(--danger);

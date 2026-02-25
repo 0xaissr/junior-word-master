@@ -675,8 +675,10 @@ function startPracticeGame(quizType) {
     answers: []
   };
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  document.getElementById('game-row-timer').style.display = 'none';
-  document.querySelector('.game-exit-practice').style.visibility = 'visible';
+  // Practice: hide timer, show remaining row, hide spacer
+  document.getElementById('game-timer').style.display = 'none';
+  document.getElementById('game-row-spacer').style.display = 'none';
+  document.getElementById('game-row-remaining').style.display = 'block';
   renderGameQuestion();
   showPage('page-practice-game');
 }
@@ -712,8 +714,7 @@ function renderGameQuestion() {
   actionsEl.innerHTML = '';
 
   if (mode === 'challenge') {
-    document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' 題';
-    document.getElementById('game-remaining').textContent = (gameState.score * 10) + ' 分';
+    document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' 題　' + (gameState.score * 10) + ' 分';
     document.getElementById('game-progress-bar').style.width = (challengeTimeLeft / (gameState.timeLimit || 180) * 100) + '%';
   } else {
     document.getElementById('game-progress-text').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
@@ -944,8 +945,10 @@ function startChallengeGame() {
   };
 
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  document.getElementById('game-row-timer').style.display = 'flex';
-  document.querySelector('.game-exit-practice').style.visibility = 'hidden';
+  // Challenge: show timer, hide remaining row (score shown inline), show spacer
+  document.getElementById('game-timer').style.display = 'block';
+  document.getElementById('game-row-spacer').style.display = 'block';
+  document.getElementById('game-row-remaining').style.display = 'none';
   startChallengeTimer(timeLimit);
   renderGameQuestion();
   showPage('page-practice-game');

@@ -127,14 +127,13 @@
     <!-- ===== Game Page (shared by Practice & Challenge) ===== -->
     <section id="page-practice-game" class="page">
       <div class="game-header">
-        <div class="game-row" id="game-row-timer" style="display:none">
+        <div class="game-row">
           <button class="btn-icon-back" onclick="exitGame()">✕</button>
           <div id="game-timer" class="game-timer"></div>
-          <div style="width:40px"></div>
-        </div>
-        <div class="game-row" id="game-row-progress">
-          <button class="btn-icon-back game-exit-practice" onclick="exitGame()">✕</button>
           <span id="game-progress-text"></span>
+          <div style="width:40px" id="game-row-spacer"></div>
+        </div>
+        <div id="game-row-remaining" class="game-row-remaining">
           <span id="game-remaining"></span>
         </div>
         <div class="progress-bar"><div id="game-progress-bar" class="progress-fill"></div></div>
