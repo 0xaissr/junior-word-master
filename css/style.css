@@ -342,6 +342,22 @@ select option { background: var(--bg-card); color: var(--text-primary); }
   text-align: center;
   padding: 40px 0 24px;
 }
+.particle-title-wrap {
+  position: relative;
+  width: 100%;
+  height: 80px;
+}
+.particle-title-wrap canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+.particle-title-wrap .app-title {
+  visibility: hidden;
+}
 .app-title {
   font-size: 2.2rem;
   font-weight: 800;
