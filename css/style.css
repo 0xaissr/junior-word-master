@@ -95,7 +95,7 @@ body {
   margin-left: -50%;
   transform-origin: 100% 0 0;
   width: 600vw;
-  animation: retro-grid-scroll 15s linear infinite;
+  animation: retro-grid-scroll 30s linear infinite;
 }
 .retro-grid-fade {
   position: absolute;
