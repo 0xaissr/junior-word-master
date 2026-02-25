@@ -45,8 +45,10 @@
 
     <!-- ===== Deck Selection Page ===== -->
     <section id="page-deck-select" class="page">
-      <button class="btn btn-back" onclick="backFromDeckSelect()">← 回首頁</button>
-      <h2 class="page-title">選擇題庫</h2>
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="backFromDeckSelect()">←</button>
+        <h2 class="page-header-title">選擇題庫</h2>
+      </div>
 
       <div class="card">
         <div class="level-toggle" id="level-toggle">
@@ -103,15 +105,17 @@
 
     <!-- ===== Practice Type Selection Page ===== -->
     <section id="page-practice-type" class="page">
-      <button class="btn btn-back" onclick="showPage('page-practice-select')">← 回單字選擇</button>
-      <h2 class="page-title">選擇題型</h2>
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="showPage('page-practice-select')">←</button>
+        <h2 class="page-header-title">選擇題型</h2>
+      </div>
       <div id="type-cards" class="type-cards"></div>
     </section>
 
     <!-- ===== Game Page (shared by Practice & Challenge) ===== -->
     <section id="page-practice-game" class="page">
       <div class="game-header">
-        <button class="btn btn-back btn-sm" onclick="exitGame()">✕ 離開</button>
+        <button class="btn-icon-back" onclick="exitGame()">✕</button>
         <div class="game-progress">
           <span id="game-progress-text"></span>
           <span id="game-remaining" class="badge"></span>
@@ -128,8 +132,10 @@
 
     <!-- ===== Challenge Setup Page ===== -->
     <section id="page-challenge-setup" class="page">
-      <button class="btn btn-back" onclick="showPage('page-deck-select')">← 回題庫選擇</button>
-      <h2 class="page-title">挑戰模式設定</h2>
+      <div class="page-header">
+        <button class="btn-icon-back" onclick="showPage('page-deck-select')">←</button>
+        <h2 class="page-header-title">挑戰模式設定</h2>
+      </div>
       <div class="card">
         <h3 style="margin-bottom:12px">題型（可多選）</h3>
         <div id="challenge-type-options" class="option-group">
