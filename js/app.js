@@ -712,7 +712,8 @@ function renderGameQuestion() {
   actionsEl.innerHTML = '';
 
   if (mode === 'challenge') {
-    document.getElementById('challenge-info').textContent = '第 ' + (currentIndex + 1) + ' 題　' + (gameState.score * 10) + ' 分';
+    document.getElementById('challenge-progress').textContent = '第 ' + (currentIndex + 1) + ' 題';
+    document.getElementById('challenge-score').textContent = (gameState.score * 10) + ' 分';
     document.getElementById('game-progress-bar').style.width = (challengeTimeLeft / (gameState.timeLimit || 180) * 100) + '%';
   } else {
     document.getElementById('practice-progress').textContent = '第 ' + (currentIndex + 1) + ' / ' + questions.length + ' 題';
