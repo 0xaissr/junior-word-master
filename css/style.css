@@ -781,20 +781,12 @@ select option { background: var(--bg-card); color: var(--text-primary); }
 
 /* ===== Game Page ===== */
 .game-header { margin-bottom: 12px; }
-/* Practice mode (default): single row [✕] [題號 center] [剩餘 right] */
-.game-header-top {
+.game-row {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
 }
-.game-timer, .game-timer-spacer { display: none; }
-#game-progress-text { flex: 1; text-align: center; font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-lg); }
-#game-remaining { font-weight: 800; color: var(--primary); font-size: var(--font-size-lg); }
-
-/* Challenge mode: row1=[✕ timer spacer], row2=[題號 center ... 分數 right] */
-.game-header.is-challenge .game-header-top { flex-wrap: wrap; }
-.game-header.is-challenge .game-timer {
-  display: block;
+.game-timer {
   flex: 1;
   text-align: center;
   font-size: 2.4rem;
@@ -803,17 +795,9 @@ select option { background: var(--bg-card); color: var(--text-primary); }
   color: var(--primary);
   line-height: 1;
 }
-.game-header.is-challenge .game-timer-spacer { display: block; width: 40px; }
-.game-header.is-challenge #game-progress-text {
-  flex: none;
-  width: 50%;
-  text-align: center;
-}
-.game-header.is-challenge #game-remaining {
-  flex: none;
-  width: 50%;
-  text-align: right;
-}
+.game-exit-practice { /* hide in challenge mode, show in practice */ }
+#game-progress-text { flex: 1; text-align: center; font-weight: 700; color: var(--text-secondary); font-size: var(--font-size-lg); }
+#game-remaining { font-weight: 800; color: var(--primary); font-size: var(--font-size-lg); }
 .game-timer.urgent {
   color: var(--danger);
   animation: timerPulse 1s ease infinite;

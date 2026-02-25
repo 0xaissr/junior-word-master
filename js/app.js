@@ -675,7 +675,8 @@ function startPracticeGame(quizType) {
     answers: []
   };
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  document.querySelector('.game-header').classList.remove('is-challenge');
+  document.getElementById('game-row-timer').style.display = 'none';
+  document.querySelector('.game-exit-practice').style.display = 'flex';
   renderGameQuestion();
   showPage('page-practice-game');
 }
@@ -943,7 +944,8 @@ function startChallengeGame() {
   };
 
   incrementPlayCount(document.getElementById('player-name').value.trim());
-  document.querySelector('.game-header').classList.add('is-challenge');
+  document.getElementById('game-row-timer').style.display = 'flex';
+  document.querySelector('.game-exit-practice').style.display = 'none';
   startChallengeTimer(timeLimit);
   renderGameQuestion();
   showPage('page-practice-game');
