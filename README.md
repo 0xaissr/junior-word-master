@@ -4,6 +4,16 @@
 
 **[線上試玩](https://0xaissr.github.io/junior-word-master/)**
 
+## 截圖
+
+| 首頁 | 題庫選擇 |
+|:---:|:---:|
+| ![首頁](docs/screenshots/home.png) | ![題庫選擇](docs/screenshots/deck-selection.png) |
+
+| 單字選擇 | 計時挑戰 |
+|:---:|:---:|
+| ![單字選擇](docs/screenshots/word-selection.png) | ![計時挑戰](docs/screenshots/challenge.png) |
+
 ## 功能
 
 - **練習模式** — 選擇單字範圍，支援中翻英、英翻中、選擇題三種題型
